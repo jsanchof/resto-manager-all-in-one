@@ -1,9 +1,12 @@
 from flask import request, jsonify, render_template
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from datetime import timedelta
+import os
 from api.models import db, User, user_role
 from api.utils import send_email
-from . import api, bcrypt
+from . import api
+from api.extensions import bcrypt
+from sqlalchemy import func
 
 def generate_verification_token(user_id):
     additional_claims = {"user_id": user_id}
