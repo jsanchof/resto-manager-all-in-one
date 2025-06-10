@@ -1,0 +1,70 @@
+from flask import request, jsonify
+from src.api import db
+from src.api.models import Table, table_status
+from . import api
+
+@api.route('/tables', methods=['POST'])
+@admin_required
+def create_table():
+    # Create table
+    try:
+        data = request.get_json()
+        table = Table(
+            number=data.get('number'),
+            chairs=data.get('chairs'),
+            status=TableStatus.AVAILABLE
+        )
+        db.session.add(table)
+        db.session.commit()
+        return jsonify({
+            "msg": "Table created successfully",
+            "table": table.serialize()
+        }), 201
+    except Exception as e:
+        print("Error creating table:", e)
+        return jsonify({"error": "An error occurred while creating the table"}), 500
+
+@api.route('/tables', methods=['GET'])
+def get_tables():
+    try:
+        tables = Table.query.all()
+        return jsonify({"tables": [table.serialize() for table in tables]}), 200
+    except Exception as e:
+        print("Error getting tables:", e)
+        return jsonify({"error": "An error occurred while getting the tables"}), 500
+
+@api.route('/tables/<int:id>', methods=['PUT'])
+@admin_required
+def update_table(id):
+    try:
+        table = Table.query.get(id)
+        if not table:
+            return jsonify({"error": "Table not found"}), 404
+
+        data = request.get_json()
+        table.number = data.get('number', table.number)
+        table.chairs = data.get('chairs', table.chairs)
+        table.status = TableStatus(data.get('status', table.status.value))
+
+        db.session.commit()
+        return jsonify({"message": "Table updated successfully"}), 200
+
+    except Exception as e:
+        print("Error updating table:", e)
+        return jsonify({"error": "An error occurred while updating the table"}), 500
+
+@api.route('/tables/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_table(id):
+    try:
+        table = Table.query.get(id)
+        if not table:
+            return jsonify({"error": "Table not found"}), 404
+
+        db.session.delete(table)
+        db.session.commit()
+        return jsonify({"message": "Table deleted successfully"}), 200
+
+    except Exception as e:
+        print("Error deleting table:", e)
+        return jsonify({"error": "An error occurred while deleting the table"}), 500 

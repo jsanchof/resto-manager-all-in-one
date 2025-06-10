@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Reservation Notification</title>
+    <style type="text/css">
+      /* Estilos base compatibles con clientes de email */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        color: #333333;
+        background-color: #f8f9fa;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background-color: #dc3545;
+        padding: 25px 20px;
+        text-align: center;
+        border-bottom: 4px solid #28a745;
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo {
+        width: 60px;
+        height: auto;
+        margin-right: 15px;
+      }
+
+      .header h1 {
+        color: #ffffff;
+        margin: 0;
+        font-size: 24px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .content {
+        padding: 30px 25px;
+        background-color: #ffffff;
+        background-image: url("https://i.imgur.com/qQkKnsH.png");
+        background-size: 200px;
+        background-repeat: repeat;
+        background-blend-mode: overlay;
+      }
+
+      .reservation-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .reservation-header {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px dashed #dc3545;
+      }
+
+      .reservation-title {
+        font-size: 22px;
+        color: #dc3545;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .reservation-subtitle {
+        color: #28a745;
+        font-size: 16px;
+      }
+
+      .guest-info {
+        background-color: #f8f9fa;
+        border-left: 4px solid #dc3545;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 0 6px 6px 0;
+      }
+
+      .info-label {
+        font-weight: bold;
+        color: #555;
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+
+      .info-value {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .info-value:last-child {
+        margin-bottom: 0;
+      }
+
+      .reservation-details {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -10px;
+        margin-bottom: 20px;
+      }
+
+      .detail-item {
+        flex: 1 0 40%;
+        padding: 10px;
+        min-width: 200px;
+      }
+
+      .detail-box {
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        padding: 15px;
+        height: 100%;
+        border: 1px solid #eee;
+      }
+
+      .additional-notes {
+        background-color: #fff8e1;
+        border: 1px solid #ffe082;
+        border-radius: 6px;
+        padding: 15px;
+        margin-top: 20px;
+      }
+
+      .notes-title {
+        color: #ff8f00;
+        font-weight: bold;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .notes-content {
+        color: #5d4037;
+        font-size: 15px;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      .action-button {
+        display: inline-block;
+        padding: 12px 20px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .confirm-button {
+        background-color: #28a745;
+        color: white !important;
+        border-bottom: 3px solid #1e7e34;
+      }
+
+      .cancel-button {
+        background-color: #dc3545;
+        color: white !important;
+        border-bottom: 3px solid #bd2130;
+      }
+
+      .divider {
+        height: 3px;
+        background: linear-gradient(to right, #28a745, #dc3545, #ffc107);
+        margin: 0;
+        padding: 0;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 20px;
+        background-color: #f8f9fa;
+        font-size: 14px;
+        color: #777;
+      }
+
+      .restaurant-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-style: italic;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 100%;
+          margin: 0;
+          border-radius: 0;
+        }
+
+        .content {
+          padding: 20px 15px;
+        }
+
+        .reservation-details {
+          flex-direction: column;
+        }
+
+        .detail-item {
+          min-width: 100%;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-content">
+          <img
+            src="https://i.imgur.com/8Z6aA82.png"
+            alt="El Mexicano Logo"
+            class="logo"
+          />
+          <h1>New Reservation</h1>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="content">
+        <div class="reservation-container">
+          <div class="reservation-header">
+            <div class="reservation-title">Reservation Received</div>
+            <div class="reservation-subtitle">
+              A new reservation request has been received
+            </div>
+          </div>
+
+          <div class="guest-info">
+            <div class="info-label">Customer Name:</div>
+            <div class="info-value">{{ name }}</div>
+
+            <div class="info-label">Contact Phone:</div>
+            <div class="info-value">{{ phone }}</div>
+          </div>
+
+          <div class="reservation-details">
+            <div class="detail-item">
+              <div class="detail-box">
+                <div class="info-label">Number of People:</div>
+                <div class="info-value">{{ quantity }} people</div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-box">
+                <div class="info-label">Date and Time:</div>
+                <div class="info-value">{{ start_date_time }}</div>
+              </div>
+            </div>
+          </div>
+
+          {% if additional_details %}
+          <div class="additional-notes">
+            <div class="notes-title">Additional Details:</div>
+            <div class="notes-content">{{ additional_details }}</div>
+          </div>
+          {% endif %}
+
+          <!-- <div class="action-buttons">
+                    <a href="#confirm-link" class="action-button confirm-button">Confirm Reservation</a>
+                    <a href="#cancel-link" class="action-button cancel-button">Reject Reservation</a>
+                </div> -->
+        </div>
+
+        <p style="color: #666; font-size: 14px; text-align: center">
+          This reservation was made through the El Mexicano website.
+          Please confirm or reject the request as soon as possible.
+        </p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="footer">
+        <p>© 2025 El Mexicano. All rights reserved.</p>
+        <!-- <p>
+                <a href="#" style="color: #dc3545; text-decoration: none;">Ver todas las reservaciones</a> |
+                <a href="#" style="color: #dc3545; text-decoration: none;">Configurar notificaciones</a>
+            </p> -->
+
+        <div class="restaurant-info">
+          <p>
+            Main St. 123, City | +123 456 7890 | reservations@elmexicano.com
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

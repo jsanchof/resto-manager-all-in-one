@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hemos recibido su mensaje - El Mexicano</title>
+    <style type="text/css">
+      /* Estilos base compatibles con clientes de email */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        color: #333333;
+        background-color: #f8f9fa;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background-color: #dc3545;
+        padding: 25px 20px;
+        text-align: center;
+        border-bottom: 4px solid #28a745;
+      }
+
+      .header-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo {
+        width: 80px;
+        height: auto;
+        margin-bottom: 15px;
+      }
+
+      .header h1 {
+        color: #ffffff;
+        margin: 0;
+        font-size: 24px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .header p {
+        color: #ffffff;
+        margin: 10px 0 0;
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 30px 25px;
+        background-color: #ffffff;
+        background-image: url("https://i.imgur.com/qQkKnsH.png");
+        background-size: 200px;
+        background-repeat: repeat;
+        background-blend-mode: overlay;
+      }
+
+      .message-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 25px;
+        margin-bottom: 20px;
+      }
+
+      .greeting {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .confirmation-message {
+        background-color: #e8f5e9;
+        border-left: 4px solid #28a745;
+        padding: 15px;
+        margin-bottom: 25px;
+        border-radius: 0 6px 6px 0;
+      }
+
+      .confirmation-title {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .confirmation-text {
+        color: #333;
+        font-size: 15px;
+      }
+
+      .message-content {
+        color: #555;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 25px;
+      }
+
+      .next-steps {
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .next-steps-title {
+        font-weight: bold;
+        color: #dc3545;
+        margin-bottom: 15px;
+        font-size: 16px;
+      }
+
+      .next-steps-text {
+        color: #555;
+        font-size: 15px;
+        margin-bottom: 15px;
+      }
+
+      .button-container {
+        text-align: center;
+        margin: 25px 0;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 12px 28px;
+        background-color: #dc3545;
+        color: #ffffff !important;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 16px;
+        border-bottom: 3px solid #bd2130;
+      }
+
+      .divider {
+        height: 3px;
+        background: linear-gradient(to right, #28a745, #dc3545, #ffc107);
+        margin: 0;
+        padding: 0;
+      }
+
+      .contact-info {
+        background-color: #f5f5f5;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 20px;
+      }
+
+      .contact-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .contact-text {
+        color: #555;
+        font-size: 15px;
+        margin-bottom: 5px;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 25px 20px;
+        background-color: #f8f9fa;
+        font-size: 14px;
+        color: #777;
+      }
+
+      .social-links {
+        margin: 15px 0;
+      }
+
+      .social-link {
+        display: inline-block;
+        margin: 0 10px;
+        color: #dc3545;
+        text-decoration: none;
+      }
+
+      .restaurant-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-style: italic;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 100%;
+          margin: 0;
+          border-radius: 0;
+        }
+
+        .content {
+          padding: 20px 15px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-content">
+          <img
+            src="https://i.imgur.com/8Z6aA82.png"
+            alt="El Mexicano Logo"
+            class="logo"
+          />
+          <h1>¡Gracias por contactarnos!</h1>
+          <p>Hemos recibido su mensaje</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="content">
+        <div class="message-container">
+          <div class="greeting">Hola, <strong>{{ name }}</strong></div>
+
+          <div class="confirmation-message">
+            <div class="confirmation-title">¡Mensaje recibido!</div>
+            <div class="confirmation-text">
+              Queremos confirmarle que hemos recibido su mensaje y lo estamos
+              procesando.
+            </div>
+          </div>
+
+          <div class="message-content">
+            <p>
+              Gracias por ponerse en contacto con El Mexicano. Valoramos mucho
+              su interés en nuestro restaurante y le agradecemos que haya tomado
+              el tiempo para escribirnos.
+            </p>
+
+            <p>
+              Nuestro equipo revisará su consulta y le responderemos a la
+              brevedad posible, generalmente dentro de las próximas 24-48 horas
+              hábiles.
+            </p>
+          </div>
+
+          <div class="next-steps">
+            <div class="next-steps-title">¿Qué sigue?</div>
+            <div class="next-steps-text">
+              <p>• Uno de nuestros representantes revisará su mensaje</p>
+              <p>• Recibirá una respuesta personalizada a su consulta</p>
+              <p>
+                • Si es necesario, nos pondremos en contacto con usted por
+                teléfono
+              </p>
+            </div>
+          </div>
+
+          <div class="button-container">
+            <a
+              href="https://www.elmexicano.com/menu"
+              class="button"
+              target="_blank"
+              >Ver Nuestro Menú</a
+            >
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-title">¿Necesita ayuda inmediata?</div>
+            <div class="contact-text">
+              Llámenos al: <strong>+123 456 7890</strong>
+            </div>
+            <div class="contact-text">
+              Horario de atención:
+              <strong>Lunes a Domingo de 12:00 a 22:00</strong>
+            </div>
+          </div>
+        </div>
+
+        <p
+          style="
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 20px;
+          "
+        >
+          ¡Esperamos poder atenderle pronto y brindarle la mejor experiencia
+          gastronómica mexicana!
+        </p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="footer">
+        <p>© 2025 El Mexicano. Todos los derechos reservados.</p>
+
+        <div class="social-links">
+          <a href="#" class="social-link">Facebook</a> |
+          <a href="#" class="social-link">Instagram</a> |
+          <a href="#" class="social-link">Twitter</a>
+        </div>
+
+        <div class="restaurant-info">
+          <p>Av. Principal 123, Ciudad | +123 456 7890 | info@elmexicano.com</p>
+          <p>www.elmexicano.com</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

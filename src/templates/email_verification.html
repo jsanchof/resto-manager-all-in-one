@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verification - El Mexicano</title>
+    <style type="text/css">
+      /* Estilos compatibles con clientes de email */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        color: #444444;
+        background-color: #f8f9fa;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        background-color: #dc3545;
+        padding: 30px 20px;
+        text-align: center;
+        background-image: url("https://i.imgur.com/qQkKnsH.png");
+        background-size: cover;
+        background-blend-mode: multiply;
+        border-bottom: 5px solid #28a745;
+      }
+
+      .logo-container {
+        margin-bottom: 15px;
+      }
+
+      .logo {
+        width: 80px;
+        height: auto;
+      }
+
+      .header h1 {
+        color: white;
+        margin: 0;
+        font-size: 28px;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+      }
+
+      .content {
+        padding: 30px;
+        background-color: #fff;
+        background-image: url("https://i.imgur.com/qQkKnsH.png");
+        background-size: 200px;
+        background-repeat: repeat;
+        background-blend-mode: overlay;
+      }
+
+      .content-inner {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 25px;
+        border-radius: 8px;
+        border: 1px solid #f0f0f0;
+      }
+
+      .greeting {
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .instructions {
+        margin-bottom: 30px;
+        font-size: 16px;
+        color: #555;
+      }
+
+      .button-container {
+        text-align: center;
+        margin: 30px 0;
+      }
+
+      .verify-button {
+        display: inline-block;
+        padding: 14px 28px;
+        background-color: #dc3545;
+        color: white !important;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 16px;
+        border-bottom: 3px solid #bd2130;
+      }
+
+      .small-text {
+        font-size: 14px;
+        color: #777;
+        margin-top: 30px;
+        border-top: 1px dashed #ddd;
+        padding-top: 20px;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 20px;
+        color: #777;
+        font-size: 14px;
+        border-top: 3px solid #f8f9fa;
+        background-color: #f8f9fa;
+      }
+
+      .social-links {
+        margin: 15px 0;
+      }
+
+      .social-link {
+        display: inline-block;
+        margin: 0 10px;
+      }
+
+      .social-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .divider {
+        height: 3px;
+        background: linear-gradient(to right, #28a745, #dc3545, #ffc107);
+        margin: 0;
+        padding: 0;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .container {
+          border-radius: 0;
+        }
+
+        .content {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo-container">
+          <img
+            src="https://i.imgur.com/8Z6aA82.png"
+            alt="El Mexicano Logo"
+            class="logo"
+          />
+        </div>
+        <h1>Email Verification</h1>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="content">
+        <div class="content-inner">
+          <div class="greeting">Dear {{name}},</div>
+
+          <div class="instructions">
+            <p>
+              Thank you for registering with El Mexicano. Please verify your email address by clicking the button below:
+            </p>
+          </div>
+
+          <div class="button-container">
+            <a href="{{verification_link}}" class="verify-button">Verify Email</a>
+          </div>
+
+          <p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+          <p class="verification-link">{{verification_link}}</p>
+
+          <div class="small-text">
+            <p>This link will expire in 24 hours.</p>
+            <p>¡Esperamos verte pronto en nuestro restaurante!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="footer">
+        <p>© 2025 El Mexicano. All rights reserved.</p>
+
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <img
+              src="https://i.ibb.co/Qp1SXBt/facebook.png"
+              alt="Facebook"
+              class="social-icon"
+            />
+          </a>
+          <a href="#" class="social-link">
+            <img
+              src="https://i.ibb.co/Qp1SXBt/instagram.png"
+              alt="Instagram"
+              class="social-icon"
+            />
+          </a>
+          <a href="#" class="social-link">
+            <img
+              src="https://i.ibb.co/Qp1SXBt/twitter.png"
+              alt="Twitter"
+              class="social-icon"
+            />
+          </a>
+        </div>
+
+        <p>
+          <a href="#" style="color: #dc3545; text-decoration: none">Ayuda</a> |
+          <a href="#" style="color: #dc3545; text-decoration: none"
+            >Privacidad</a
+          >
+          |
+          <a href="#" style="color: #dc3545; text-decoration: none">Términos</a>
+        </p>
+
+        <p style="margin-top: 15px; font-style: italic; color: #999">
+          Av. Principal 123, Ciudad | +123 456 7890
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
