@@ -97,7 +97,8 @@ def update_order_status(id):
 
         if new_status not in allowed_transitions.get(current_status, []):
             return create_api_response(
-                error="Status transition not allowed for kitchen staff", status_code=403
+                error="Status transition not allowed for kitchen staff",
+                status_code=403,
             )
 
         order.status = new_status

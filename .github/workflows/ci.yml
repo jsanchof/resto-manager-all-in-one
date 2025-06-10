@@ -93,11 +93,17 @@ jobs:
       - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-
-      - name: 📦 Install linting tools
+          python-version: '3.11'      - name: 📦 Install linting tools
         run: |
           pip install flake8 black
+
+      - name: 🎨 Format code with black
+        run: |
+          black . --line-length 88 --check
+
+      - name: 🔍 Lint with flake8
+        run: |
+          flake8 . --config ../../setup.cfg
 
       - name: 🔍 Run flake8
         run: flake8 .

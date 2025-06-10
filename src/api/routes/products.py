@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from src.api import db
 from src.api.models import Dishes, Drinks, dish_type, drink_type
-from sqlalchemy import select, func, or_
+from sqlalchemy import select, or_
 from . import api
 
 
@@ -15,8 +15,8 @@ def get_productos():
         tipo = request.args.get("tipo", "").upper().strip()
 
         # Build base query for dishes
-        dishes_stmt = select(Dishes).where(Dishes.is_active == True)
-        drinks_stmt = select(Drinks).where(Drinks.is_active == True)
+        dishes_stmt = select(Dishes).where(Dishes.is_active.is_(True))
+        drinks_stmt = select(Drinks).where(Drinks.is_active.is_(True))
 
         # Apply search filter if provided
         if search:
@@ -236,7 +236,10 @@ def actualizar_producto(tipo, id):
             )
 
         if not item:
-            return jsonify({"error": f"{tipo.capitalize()} no encontrado"}), 404
+            return (
+                jsonify({"error": f"{tipo.capitalize()} no encontrado"}),
+                404,
+            )
 
         item.name = data.get("name", item.name)
         item.description = data.get("description", item.description)
@@ -276,12 +279,18 @@ def eliminar_producto(tipo, id):
             )
 
         if not item:
-            return jsonify({"error": f"{tipo.capitalize()} no encontrado"}), 404
+            return (
+                jsonify({"error": f"{tipo.capitalize()} no encontrado"}),
+                404,
+            )
 
         db.session.delete(item)
         db.session.commit()
 
-        return jsonify({"message": f"{tipo.capitalize()} eliminado correctamente"}), 200
+        return (
+            jsonify({"message": f"{tipo.capitalize()} eliminado correctamente"}),
+            200,
+        )
 
     except Exception as e:
         db.session.rollback()

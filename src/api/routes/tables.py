@@ -1,7 +1,21 @@
 from flask import request, jsonify
 from src.api import db
-from src.api.models import Table, table_status
+from src.api.models import User, Table, table_status
 from . import api
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+
+# Admin Authentication Check
+def admin_required(f):
+    def wrapper(*args, **kwargs):
+        current_user_id = get_jwt_identity()
+        user = User.query.filter_by(email=current_user_id).first()
+        if not user or user.role != "ADMIN":
+            return jsonify({"error": "Admin privileges required"}), 403
+        return f(*args, **kwargs)
+
+    wrapper.__name__ = f.__name__
+    return jwt_required()(wrapper)
 
 
 @api.route("/tables", methods=["POST"])
@@ -13,27 +27,41 @@ def create_table():
         table = Table(
             number=data.get("number"),
             chairs=data.get("chairs"),
-            status=TableStatus.AVAILABLE,
+            status=table_status.AVAILABLE,
         )
         db.session.add(table)
         db.session.commit()
         return (
-            jsonify({"msg": "Table created successfully", "table": table.serialize()}),
+            jsonify(
+                {
+                    "msg": "Table created successfully",
+                    "table": table.serialize(),
+                }
+            ),
             201,
         )
     except Exception as e:
         print("Error creating table:", e)
-        return jsonify({"error": "An error occurred while creating the table"}), 500
+        return (
+            jsonify({"error": "An error occurred while creating the table"}),
+            500,
+        )
 
 
 @api.route("/tables", methods=["GET"])
 def get_tables():
     try:
         tables = Table.query.all()
-        return jsonify({"tables": [table.serialize() for table in tables]}), 200
+        return (
+            jsonify({"tables": [table.serialize() for table in tables]}),
+            200,
+        )
     except Exception as e:
         print("Error getting tables:", e)
-        return jsonify({"error": "An error occurred while getting the tables"}), 500
+        return (
+            jsonify({"error": "An error occurred while getting the tables"}),
+            500,
+        )
 
 
 @api.route("/tables/<int:id>", methods=["PUT"])
@@ -47,14 +75,17 @@ def update_table(id):
         data = request.get_json()
         table.number = data.get("number", table.number)
         table.chairs = data.get("chairs", table.chairs)
-        table.status = TableStatus(data.get("status", table.status.value))
+        table.status = table_status(data.get("status", table.status.value))
 
         db.session.commit()
         return jsonify({"message": "Table updated successfully"}), 200
 
     except Exception as e:
         print("Error updating table:", e)
-        return jsonify({"error": "An error occurred while updating the table"}), 500
+        return (
+            jsonify({"error": "An error occurred while updating the table"}),
+            500,
+        )
 
 
 @api.route("/tables/<int:id>", methods=["DELETE"])
@@ -71,4 +102,7 @@ def delete_table(id):
 
     except Exception as e:
         print("Error deleting table:", e)
-        return jsonify({"error": "An error occurred while deleting the table"}), 500
+        return (
+            jsonify({"error": "An error occurred while deleting the table"}),
+            500,
+        )

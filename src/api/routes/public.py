@@ -15,7 +15,10 @@ def get_all_dishes():
         dish_list = [dish.serialize() for dish in dishes]
         return jsonify(dish_list), 200
     except Exception as e:
-        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
+        return (
+            jsonify({"error": "Internal Server Error", "message": str(e)}),
+            500,
+        )
 
 
 @public.route("/dishes/<int:dish_id>", methods=["GET"])
@@ -26,7 +29,10 @@ def get_dish_by_id(dish_id):
             return jsonify({"error": "No se encontró el platillo"}), 404
         return jsonify(dish.serialize()), 200
     except Exception as e:
-        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
+        return (
+            jsonify({"error": "Internal Server Error", "message": str(e)}),
+            500,
+        )
 
 
 # Drinks endpoints
@@ -37,7 +43,10 @@ def get_all_drinks():
         drink_list = [drink.serialize() for drink in drinks]
         return jsonify(drink_list), 200
     except Exception as e:
-        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
+        return (
+            jsonify({"error": "Internal Server Error", "message": str(e)}),
+            500,
+        )
 
 
 @public.route("/drinks/<int:drink_id>", methods=["GET"])
@@ -48,7 +57,10 @@ def get_drink_by_id(drink_id):
             return jsonify({"error": "No se encontró la bebida"}), 404
         return jsonify(drink.serialize()), 200
     except Exception as e:
-        return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
+        return (
+            jsonify({"error": "Internal Server Error", "message": str(e)}),
+            500,
+        )
 
 
 # Contact form
@@ -75,7 +87,10 @@ def handle_contact_email():
         # HTML bodies
         html_user_body = render_template("email_pagina_contacto.html", name=name)
         html_admin_body = render_template(
-            "email_pagina_contacto_admin.html", name=name, message=message, email=email
+            "email_pagina_contacto_admin.html",
+            name=name,
+            message=message,
+            email=email,
         )
 
         # Send emails and verify results
@@ -100,4 +115,7 @@ def handle_contact_email():
 
     except Exception as e:
         print("❌ Error in /contact:", e)
-        return jsonify({"error": "Ocurrió un error al procesar la solicitud"}), 500
+        return (
+            jsonify({"error": "Ocurrió un error al procesar la solicitud"}),
+            500,
+        )

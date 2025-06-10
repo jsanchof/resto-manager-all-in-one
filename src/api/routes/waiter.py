@@ -12,6 +12,7 @@ from src.api.models import (
     Product,
 )
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from src.api.utils import create_api_response
 from . import api
 from datetime import datetime
 
@@ -38,7 +39,9 @@ def get_waiter_orders():
 
         # Build base query with necessary joins
         stmt = select(Order).options(
-            joinedload(Order.user), joinedload(Order.items), joinedload(Order.table)
+            joinedload(Order.user),
+            joinedload(Order.items),
+            joinedload(Order.table),
         )
 
         total = db.session.scalar(select(func.count()).select_from(stmt.subquery()))
@@ -122,7 +125,10 @@ def create_waiter_order():
             items.append(item)
 
         if not items:
-            return jsonify({"error": "Order must contain at least one product"}), 400
+            return (
+                jsonify({"error": "Order must contain at least one product"}),
+                400,
+            )
 
         new_order.has_beverages = has_beverages
         new_order.total = total
@@ -186,7 +192,8 @@ def mark_order_paid(id):
         db.session.commit()
 
         return create_api_response(
-            data=order.serialize(), message="Order marked as paid and table freed"
+            data=order.serialize(),
+            message="Order marked as paid and table freed",
         )
 
     except Exception as e:

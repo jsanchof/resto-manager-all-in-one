@@ -1,5 +1,7 @@
 import os
 import sys
+from sqlalchemy import text
+from werkzeug.security import generate_password_hash
 
 # Add the src directory to the Python path
 sys.path.append(
@@ -9,8 +11,6 @@ sys.path.append(
 from src.app import app
 from src.api import db
 from src.api.models import User, user_role
-from werkzeug.security import generate_password_hash
-from sqlalchemy import text
 
 
 def create_test_users():

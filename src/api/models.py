@@ -1,5 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean, Enum, DateTime, Integer, ForeignKey, Text
+from sqlalchemy import (
+    String,
+    Boolean,
+    Enum,
+    DateTime,
+    Integer,
+    ForeignKey,
+    Text,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enum import Enum as PyEnum
 from sqlalchemy.sql import func
@@ -25,11 +33,15 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
     role: Mapped[user_role] = mapped_column(
-        Enum(user_role, name="user_role_enum", native_enum=False), nullable=False
+        Enum(user_role, name="user_role_enum", native_enum=False),
+        nullable=False,
     )
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+        DateTime(),
+        default=func.now(),
+        server_default=func.now(),
+        nullable=False,
     )
     updated_at: Mapped[DateTime] = mapped_column(
         DateTime(),
@@ -49,8 +61,8 @@ class User(db.Model):
             # do not serialize the password, its a security breach
             "role": self.role.value,
             "is_active": self.is_active,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.created_at.isoformat() if self.created_at else None,
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.created_at.isoformat() if self.created_at else None),
         }
 
 
@@ -72,11 +84,15 @@ class Dishes(db.Model):
     url_img: Mapped[str] = mapped_column(String(200), nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
     type: Mapped[dish_type] = mapped_column(
-        Enum(dish_type, name="dish_type_enum", native_enum=False), nullable=False
+        Enum(dish_type, name="dish_type_enum", native_enum=False),
+        nullable=False,
     )
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+        DateTime(),
+        default=func.now(),
+        server_default=func.now(),
+        nullable=False,
     )
     updated_at: Mapped[DateTime] = mapped_column(
         DateTime(),
@@ -95,8 +111,8 @@ class Dishes(db.Model):
             "price": self.price,
             "type": self.type.value,
             "is_active": self.is_active,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.created_at.isoformat() if self.created_at else None,
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.created_at.isoformat() if self.created_at else None),
         }
 
 
@@ -117,11 +133,15 @@ class Drinks(db.Model):
     url_img: Mapped[str] = mapped_column(String(200), nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
     type: Mapped[drink_type] = mapped_column(
-        Enum(drink_type, name="drink_type_enum", native_enum=False), nullable=False
+        Enum(drink_type, name="drink_type_enum", native_enum=False),
+        nullable=False,
     )
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+        DateTime(),
+        default=func.now(),
+        server_default=func.now(),
+        nullable=False,
     )
     updated_at: Mapped[DateTime] = mapped_column(
         DateTime(),
@@ -140,8 +160,8 @@ class Drinks(db.Model):
             "price": self.price,
             "type": self.type.value,
             "is_active": self.is_active,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.created_at.isoformat() if self.created_at else None,
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "updated_at": (self.created_at.isoformat() if self.created_at else None),
         }
 
 
@@ -164,12 +184,16 @@ class Reservation(db.Model):
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     table_id: Mapped[int] = mapped_column(ForeignKey("tables.id"), nullable=True)
     status: Mapped[reservation_status] = mapped_column(
-        Enum(reservation_status, native_enum=False), default=reservation_status.PENDING
+        Enum(reservation_status, native_enum=False),
+        default=reservation_status.PENDING,
     )
     start_date_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     additional_details: Mapped[str] = mapped_column(Text, nullable=True)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+        DateTime(),
+        default=func.now(),
+        server_default=func.now(),
+        nullable=False,
     )
 
     # Relaciones opcionales
@@ -188,7 +212,7 @@ class Reservation(db.Model):
             "status": self.status.value,
             "start_date_time": self.start_date_time.isoformat(),
             "additional_details": self.additional_details,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
         }
 
 
@@ -240,7 +264,10 @@ class Order(db.Model):
     total: Mapped[float] = mapped_column(nullable=False)
     take_away: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+        DateTime(),
+        default=func.now(),
+        server_default=func.now(),
+        nullable=False,
     )
     updated_at: Mapped[DateTime] = mapped_column(
         DateTime(),

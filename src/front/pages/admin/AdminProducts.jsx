@@ -659,4 +659,4 @@ function AdminProductos() {
   );
 }
 
-export default AdminProductos;
+export default AdminProducts;

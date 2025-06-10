@@ -42,7 +42,8 @@ def generate_sitemap(app):
     return (
         """
         <div style="text-align: center;">
-        <img style="max-height: 80px" src='https://storage.googleapis.com/breathecode/boilerplates/rigo-baby.jpeg' />
+        <img style="max-height: 80px" src=
+        'https://storage.googleapis.com/breathecode/boilerplates/rigo-baby.jpeg' />
         <h1>Rigo welcomes you to your API!!</h1>
         <p>API HOST: <script>document.write('<input style="padding: 5px; width: 300px" type="text" value="'+window.location.href+'" />');</script></p>
         <p>Start working on your project by following the <a href="https://start.4geeksacademy.com/starters/full-stack" target="_blank">Quick Start</a></p>
@@ -84,7 +85,7 @@ def send_email(to_email, subject, body, is_html=False):
 
     except Exception as e:
         print("❌ Error al enviar correo:")
-        traceback.print_exc()
+        traceback.print_exc(), e
         return False
 
 
@@ -154,7 +155,10 @@ def create_api_response(
     Returns:
         A tuple of (response_dict, status_code)
     """
-    response = {"success": 200 <= status_code < 300, "status_code": status_code}
+    response = {
+        "success": 200 <= status_code < 300,
+        "status_code": status_code,
+    }
 
     if data is not None:
         response["data"] = data
@@ -170,7 +174,11 @@ def create_api_response(
 
 # Standard pagination response
 def create_paginated_response(
-    items: list, total: int, page: int, per_page: int, message: Optional[str] = None
+    items: list,
+    total: int,
+    page: int,
+    per_page: int,
+    message: Optional[str] = None,
 ) -> tuple[Dict[str, Any], int]:
     """
     Create a standardized paginated response.

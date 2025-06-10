@@ -626,4 +626,4 @@ function AdminOrdenes() {
     );
 }
 
-export default AdminOrdenes;
+export default AdminOrders;

@@ -95,7 +95,8 @@ def get_all_orders():
     has_beverages = request.args.get("has_beverages", type=bool)
 
     query = Order.query.options(
-        joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product)
+        joinedload(Order.user),
+        joinedload(Order.items).joinedload(OrderItem.product),
     )
 
     if status:
@@ -181,10 +182,11 @@ def get_bar_orders():
 
     # Get orders that have beverages and are in PENDIENTE or EN_PROCESO status
     query = Order.query.filter(
-        Order.has_beverages == True,
+        Order.has_beverages.is_(True),
         Order.status.in_([order_status.PENDIENTE, order_status.EN_PROCESO]),
     ).options(
-        joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product)
+        joinedload(Order.user),
+        joinedload(Order.items).joinedload(OrderItem.product),
     )
 
     orders = query.order_by(Order.created_at.asc()).paginate(
@@ -419,7 +421,10 @@ def add_product_ingredients(product_id):
 
     db.session.commit()
     return jsonify(
-        {"message": "Ingredients updated successfully", "product_id": product_id}
+        {
+            "message": "Ingredients updated successfully",
+            "product_id": product_id,
+        }
     )
 
 

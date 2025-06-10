@@ -739,4 +739,4 @@ function AdminReservas() {
   )
 }
 
-export default AdminReservas
+export default AdminReservations

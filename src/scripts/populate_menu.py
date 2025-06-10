@@ -2,7 +2,8 @@
 Script to populate the menu with initial data.
 """
 
-from src.api.models import db, Product, Ingredient, ProductIngredient, Dishes, Drinks
+from src.api.models import db, Product, Ingredient
+from src.api.models import ProductIngredient, Dishes, Drinks
 from src.api import create_app
 
 
@@ -11,19 +12,19 @@ def populate_menu(app):
     with app.app_context():
         # Create ingredients
         ingredients = {
-            "tomato": Ingredient(name="Tomato", stock=100, unit="units"),
-            "lettuce": Ingredient(name="Lettuce", stock=100, unit="units"),
-            "cheese": Ingredient(name="Cheese", stock=100, unit="slices"),
-            "beef": Ingredient(name="Beef Patty", stock=100, unit="units"),
-            "bun": Ingredient(name="Burger Bun", stock=100, unit="units"),
-            "chicken": Ingredient(name="Chicken Breast", stock=100, unit="units"),
-            "bacon": Ingredient(name="Bacon", stock=100, unit="slices"),
-            "onion": Ingredient(name="Onion", stock=100, unit="units"),
-            "potato": Ingredient(name="Potato", stock=100, unit="kg"),
-            "cola": Ingredient(name="Cola Syrup", stock=100, unit="liters"),
-            "water": Ingredient(name="Carbonated Water", stock=100, unit="liters"),
-            "coffee": Ingredient(name="Coffee Beans", stock=100, unit="kg"),
-            "milk": Ingredient(name="Milk", stock=100, unit="liters"),
+            "tomato": Ingredient(name="Tomato", stock=10, unit="units"),
+            "lettuce": Ingredient(name="Lettuce", stock=10, unit="units"),
+            "cheese": Ingredient(name="Cheese", stock=10, unit="slices"),
+            "beef": Ingredient(name="Beef Patty", stock=10, unit="units"),
+            "bun": Ingredient(name="Burger Bun", stock=10, unit="units"),
+            "chicken": Ingredient(name="Chicken Brst", stock=10, unit="units"),
+            "bacon": Ingredient(name="Bacon", stock=10, unit="slices"),
+            "onion": Ingredient(name="Onion", stock=10, unit="units"),
+            "potato": Ingredient(name="Potato", stock=10, unit="kg"),
+            "cola": Ingredient(name="Cola Syrup", stock=10, unit="liters"),
+            "water": Ingredient(name="Carbonated Water", stock=10, unit="liters"),
+            "coffee": Ingredient(name="Coffee Beans", stock=10, unit="kg"),
+            "milk": Ingredient(name="Milk", stock=10, unit="liters"),
         }
 
         for ingredient in ingredients.values():

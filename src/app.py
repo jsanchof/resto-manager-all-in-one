@@ -1,11 +1,11 @@
 """
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
+This module takes care of starting the API Server, Loading the DB and Adding the
+endpoints
 """
 
 import os
-from flask import Flask, request, jsonify, url_for, send_from_directory, render_template
+from flask import Flask, jsonify, send_from_directory
 from flask_migrate import Migrate
-from flask_swagger import swagger
 from src.api.utils import APIException, generate_sitemap
 from src.api import db, bcrypt, jwt, cors
 from src.api.admin import setup_admin
@@ -13,20 +13,6 @@ from src.api.commands import setup_commands
 from src.api.routes import register_routes
 from datetime import timedelta
 from sqlalchemy import text
-
-# Import all models to ensure they are registered with SQLAlchemy
-from src.api.models import (
-    User,
-    Product,
-    Ingredient,
-    Order,
-    OrderItem,
-    ProductIngredient,
-    Dishes,
-    Drinks,
-    Table,
-    Reservation,
-)
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(
@@ -43,15 +29,13 @@ bcrypt.init_app(app)
 app.url_map.strict_slashes = False
 
 # database configuration
-db_url = os.getenv(
-    "DATABASE_URL", "postgresql://postgres:admin1234@localhost:5432/restaurant"
-)
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    db_url.replace("postgres://", "postgresql://")
-    if db_url.startswith("postgres://")
-    else db_url
-)
+default_db_url = "postgresql://postgres:admin1234@localhost:5432/restaurant"
+db_url = os.getenv("DATABASE_URL", default_db_url)
 
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://")
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize SQLAlchemy

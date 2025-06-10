@@ -10,7 +10,7 @@ from flask_jwt_extended import (
 from src.api.utils import send_email
 from datetime import timedelta
 import os
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 auth = Blueprint("auth", __name__)
 
@@ -30,13 +30,19 @@ def send_verification_email(user_email, user_id):
     frontend_url = os.getenv("FRONTEND_URL", "").strip('"').strip("'")
 
     if not frontend_url:
-        raise RuntimeError("FRONTEND_URL no está definido correctamente")
+        raise RuntimeError("FRONTEND_URL not properly configured")
 
     verification_url = f"{frontend_url}/verify-email?token={token}"
     html_body = render_template(
-        "email_verification.html", verification_url=verification_url
+        "email_verification.html",
+        verification_url=verification_url,
     )
-    send_email(user_email, "Verifica tu correo electrónico", html_body, is_html=True)
+    send_email(
+        user_email,
+        "Verify your email address",
+        html_body,
+        is_html=True,
+    )
 
 
 @auth.route("/register", methods=["POST"])
@@ -52,15 +58,18 @@ def handle_register():
         role_str = (data.get("role") or "").upper()
 
         if not all([name, last_name, phone_number, email, password, role_str]):
-            return jsonify({"msg": "Todos los campos son requeridos"}), 400
+            return jsonify({"msg": "All fields are required"}), 400
 
         existing_user = db.session.scalar(db.select(User).where(User.email == email))
         if existing_user:
-            return jsonify({"msg": "El usuario ya existe"}), 409
+            return jsonify({"msg": "User already exists"}), 409
 
         valid_roles = [r.value for r in user_role]
         if role_str not in valid_roles:
-            return jsonify({"msg": "Rol inválido", "valid_roles": valid_roles}), 400
+            return (
+                jsonify({"msg": "Invalid role", "valid_roles": valid_roles}),
+                400,
+            )
 
         role = user_role(role_str)
         password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
@@ -79,7 +88,7 @@ def handle_register():
         db.session.commit()
         send_verification_email(new_user.email, new_user.id)
 
-        return jsonify({"ok": True, "msg": "Register was successfull..."}), 201
+        return jsonify({"ok": True, "msg": "Registration successful"}), 201
     except Exception as e:
         print("Error:", str(e))
         db.session.rollback()
@@ -101,10 +110,16 @@ def handle_login():
             return jsonify({"msg": "El usuario no existe"}), 404
 
         if not user.is_active:
-            return jsonify({"msg": "Debe verificar su correo electrónico"}), 403
+            return (
+                jsonify({"msg": "Debe verificar su correo electrónico"}),
+                403,
+            )
 
         if not bcrypt.check_password_hash(user.password, password):
-            return jsonify({"msg": "El correo o la contraseña son incorrectos"}), 401
+            return (
+                jsonify({"msg": "El correo o la contraseña son incorrectos"}),
+                401,
+            )
 
         user_role = user.role.value
         claims = {"role": user_role, "email": user.email, "user_id": user.id}
@@ -204,14 +219,12 @@ def list_users():
         # Filter by is_active
         if is_active_param is not None:
             if is_active_param.lower() == "true":
-                stmt_base = stmt_base.where(User.is_active == True)
+                stmt_base = stmt_base.where(User.is_active.is_(True))
             elif is_active_param.lower() == "false":
-                stmt_base = stmt_base.where(User.is_active == False)
+                stmt_base = stmt_base.where(User.is_active.is_(False))
             else:
                 return (
-                    jsonify(
-                        {"error": "El parámetro 'is_active' debe ser 'true' o 'false'"}
-                    ),
+                    jsonify({"error": "is_active parameter must be 'true' or 'false'"}),
                     400,
                 )
 
@@ -225,7 +238,7 @@ def list_users():
                 return (
                     jsonify(
                         {
-                            "error": f"Rol inválido. Debe ser uno de: {[r.name for r in user_role]}"
+                            "error": f"Rol inválido. Debe ser uno de: {[r.name for r in user_role]}",
                         }
                     ),
                     400,
@@ -301,7 +314,10 @@ def edit_user(user_id):
                 User.email == data["email"], User.id != user_id
             ).first()
             if existing_user:
-                return jsonify({"msg": "El correo electrónico ya está en uso"}), 400
+                return (
+                    jsonify({"msg": "El correo electrónico ya está en uso"}),
+                    400,
+                )
             user.email = data["email"]
         if "password" in data:
             user.password = bcrypt.generate_password_hash(data["password"]).decode(
@@ -311,11 +327,17 @@ def edit_user(user_id):
             role_str = data["role"].upper()
             valid_roles = [r.value for r in user_role]
             if role_str not in valid_roles:
-                return jsonify({"msg": "Rol inválido", "valid_roles": valid_roles}), 400
+                return (
+                    jsonify({"msg": "Rol inválido", "valid_roles": valid_roles}),
+                    400,
+                )
             user.role = user_role(role_str)
 
         db.session.commit()
-        return jsonify({"ok": True, "msg": "Usuario actualizado correctamente"}), 200
+        return (
+            jsonify({"ok": True, "msg": "Usuario actualizado correctamente"}),
+            200,
+        )
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": f"Error al actualizar usuario: {str(e)}"}), 500

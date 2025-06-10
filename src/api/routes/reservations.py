@@ -205,7 +205,10 @@ def update_reservation(id):
     except Exception as e:
         db.session.rollback()
         print("Error al actualizar la reserva:", e)
-        return jsonify({"error": "Ocurrió un error al actualizar la reserva"}), 500
+        return (
+            jsonify({"error": "Ocurrió un error al actualizar la reserva"}),
+            500,
+        )
 
 
 @api.route("/reservations/<int:id>", methods=["DELETE"])
@@ -229,4 +232,7 @@ def delete_reservation(id):
     except Exception as e:
         db.session.rollback()
         print("Error al eliminar la reserva:", e)
-        return jsonify({"error": "Ocurrió un error al eliminar la reserva"}), 500
+        return (
+            jsonify({"error": "Ocurrió un error al eliminar la reserva"}),
+            500,
+        )
