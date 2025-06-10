@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 
-export const EditarPerfil = () => {
+export const EditProfile = () => {
 
     const [formData, setFormData] = useState({
         name: "",
@@ -69,27 +69,27 @@ export const EditarPerfil = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-    
+
         // Validaciones
         if (!formData.name || !formData.lastName) {
             toast.error('Por favor completa todos los campos obligatorios.');
             return;
         }
-    
+
         if (formData.newPassword && formData.newPassword !== formData.confirmNewPassword) {
             toast.error("Las contraseñas no coinciden.");
             return;
         }
-    
+
         if (formData.newEmail && formData.newEmail !== formData.confirmNewEmail) {
             toast.error("Los emails no coinciden.");
             return;
         }
-    
+
         // Envia los datos al backend
         try {
             const token = sessionStorage.getItem("token");
-    
+
             const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/profile", {
                 method: "PUT",
                 headers: {
@@ -103,22 +103,22 @@ export const EditarPerfil = () => {
                     email: formData.newEmail ? formData.newEmail : formData.oldEmail
                 }),
             });
-    
+
             const data = await response.json();
             console.log(data);
-    
+
             if (response.ok) {
                 toast.success('Perfil actualizado correctamente');
             } else {
                 toast.error(data.error || "Hubo un error al actualizar el perfil.");
             }
-    
+
         } catch (error) {
             console.error("Error en la actualización:", error);
             toast.error("Error de conexión al servidor.");
         }
     };
-    
+
 
 
     return (

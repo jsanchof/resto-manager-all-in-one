@@ -22,16 +22,22 @@ class User(db.Model):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     last_name: Mapped[str] = mapped_column(String(120), nullable=False)
     phone_number: Mapped[str] = mapped_column(String(120), nullable=False)
-    email: Mapped[str] = mapped_column(
-        String(120), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
     role: Mapped[user_role] = mapped_column(
-        Enum(user_role, name="user_role_enum", native_enum=False), nullable=False)
+        Enum(user_role, name="user_role_enum", native_enum=False), nullable=False
+    )
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False)
-    updated_at: Mapped[DateTime] = mapped_column(DateTime(), default=func.now(
-    ), server_default=func.now(), onupdate=func.now(), nullable=False)
+        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[DateTime] = mapped_column(
+        DateTime(),
+        default=func.now(),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
 
     def serialize(self):
         return {
@@ -44,8 +50,9 @@ class User(db.Model):
             "role": self.role.value,
             "is_active": self.is_active,
             "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.created_at.isoformat() if self.created_at else None
+            "updated_at": self.created_at.isoformat() if self.created_at else None,
         }
+
 
 # dishes enum and model
 
@@ -65,12 +72,19 @@ class Dishes(db.Model):
     url_img: Mapped[str] = mapped_column(String(200), nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
     type: Mapped[dish_type] = mapped_column(
-        Enum(dish_type, name="dish_type_enum", native_enum=False), nullable=False)
+        Enum(dish_type, name="dish_type_enum", native_enum=False), nullable=False
+    )
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False)
-    updated_at: Mapped[DateTime] = mapped_column(DateTime(), default=func.now(
-    ), server_default=func.now(), onupdate=func.now(), nullable=False)
+        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[DateTime] = mapped_column(
+        DateTime(),
+        default=func.now(),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
 
     def serialize(self):
         return {
@@ -82,8 +96,9 @@ class Dishes(db.Model):
             "type": self.type.value,
             "is_active": self.is_active,
             "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.created_at.isoformat() if self.created_at else None
+            "updated_at": self.created_at.isoformat() if self.created_at else None,
         }
+
 
 # Drinks enum and model
 
@@ -102,12 +117,19 @@ class Drinks(db.Model):
     url_img: Mapped[str] = mapped_column(String(200), nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
     type: Mapped[drink_type] = mapped_column(
-        Enum(drink_type, name="drink_type_enum", native_enum=False), nullable=False)
+        Enum(drink_type, name="drink_type_enum", native_enum=False), nullable=False
+    )
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False)
-    updated_at: Mapped[DateTime] = mapped_column(DateTime(), default=func.now(
-    ), server_default=func.now(), onupdate=func.now(), nullable=False)
+        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[DateTime] = mapped_column(
+        DateTime(),
+        default=func.now(),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
 
     def serialize(self):
         return {
@@ -119,7 +141,7 @@ class Drinks(db.Model):
             "type": self.type.value,
             "is_active": self.is_active,
             "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.created_at.isoformat() if self.created_at else None
+            "updated_at": self.created_at.isoformat() if self.created_at else None,
         }
 
 
@@ -140,14 +162,15 @@ class Reservation(db.Model):
     guest_phone: Mapped[str] = mapped_column(String(20), nullable=False)
     email: Mapped[str] = mapped_column(String(120), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
-    table_id: Mapped[int] = mapped_column(
-        ForeignKey("tables.id"), nullable=True)
-    status: Mapped[reservation_status] = mapped_column(Enum(
-        reservation_status, native_enum=False), default=reservation_status.PENDING)
+    table_id: Mapped[int] = mapped_column(ForeignKey("tables.id"), nullable=True)
+    status: Mapped[reservation_status] = mapped_column(
+        Enum(reservation_status, native_enum=False), default=reservation_status.PENDING
+    )
     start_date_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     additional_details: Mapped[str] = mapped_column(Text, nullable=True)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False)
+        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+    )
 
     # Relaciones opcionales
     # user = relationship("User", backref="reservations")
@@ -168,6 +191,7 @@ class Reservation(db.Model):
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
+
 # Reservation status
 
 
@@ -183,8 +207,7 @@ class Table(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     number: Mapped[int] = mapped_column(Integer, nullable=False)
     chairs: Mapped[int] = mapped_column(Integer, nullable=False)
-    status: Mapped[table_status] = mapped_column(
-        Enum(table_status, native_enum=False))
+    status: Mapped[table_status] = mapped_column(Enum(table_status, native_enum=False))
 
     def serialize(self):
         return {
@@ -207,26 +230,32 @@ class Order(db.Model):
     __tablename__ = "orders"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    order_code: Mapped[str] = mapped_column(
-        String(20), unique=True, nullable=False)
+    order_code: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    table_id: Mapped[int] = mapped_column(
-        ForeignKey("tables.id"), nullable=True)
+    table_id: Mapped[int] = mapped_column(ForeignKey("tables.id"), nullable=True)
     status: Mapped[order_status] = mapped_column(
-        Enum(order_status, native_enum=False), default=order_status.PENDING)
+        Enum(order_status, native_enum=False), default=order_status.PENDING
+    )
     total: Mapped[float] = mapped_column(nullable=False)
     take_away: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
     created_at: Mapped[DateTime] = mapped_column(
-        DateTime(), default=func.now(), server_default=func.now(), nullable=False)
-    updated_at: Mapped[DateTime] = mapped_column(DateTime(), default=func.now(
-    ), server_default=func.now(), onupdate=func.now(), nullable=False)
+        DateTime(), default=func.now(), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[DateTime] = mapped_column(
+        DateTime(),
+        default=func.now(),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
 
     user = relationship("User", backref="orders")
     creator = relationship("User", backref="created_orders")
     table = relationship("Table", backref="orders")
     details = relationship(
-        "OrderDetail", back_populates="order", cascade="all, delete-orphan")
+        "OrderDetail", back_populates="order", cascade="all, delete-orphan"
+    )
 
     def serialize(self):
         try:
@@ -235,14 +264,24 @@ class Order(db.Model):
                 "orderId": self.order_code,
                 "userId": self.user_id,
                 "creatorId": self.creator_id,
-                "customer": f"{self.user.name} {self.user.last_name}" if self.user else "Guest",
-                "creator": f"{self.creator.name} {self.creator.last_name}" if self.creator else "Guest",
+                "customer": (
+                    f"{self.user.name} {self.user.last_name}" if self.user else "Guest"
+                ),
+                "creator": (
+                    f"{self.creator.name} {self.creator.last_name}"
+                    if self.creator
+                    else "Guest"
+                ),
                 "table": self.table.serialize() if self.table else None,
                 "status": self.status.value,
                 "total": float(self.total),
                 "take_away": self.take_away,
                 "date": self.created_at.strftime("%Y-%m-%d"),
-                "details": [detail.serialize() for detail in self.details] if self.details else []
+                "details": (
+                    [detail.serialize() for detail in self.details]
+                    if self.details
+                    else []
+                ),
             }
         except Exception as e:
             print(f"Error serializing order {self.id}: {str(e)}")
@@ -258,7 +297,7 @@ class Order(db.Model):
                 "total": float(self.total),
                 "take_away": self.take_away,
                 "date": self.created_at.strftime("%Y-%m-%d"),
-                "details": []
+                "details": [],
             }
 
 
@@ -266,12 +305,9 @@ class OrderDetail(db.Model):
     __tablename__ = "order_details"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    order_id: Mapped[int] = mapped_column(
-        ForeignKey("orders.id"), nullable=False)
-    dish_id: Mapped[int] = mapped_column(
-        ForeignKey("dishes.id"), nullable=True)
-    drink_id: Mapped[int] = mapped_column(
-        ForeignKey("drinks.id"), nullable=True)
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), nullable=False)
+    dish_id: Mapped[int] = mapped_column(ForeignKey("dishes.id"), nullable=True)
+    drink_id: Mapped[int] = mapped_column(ForeignKey("drinks.id"), nullable=True)
     product_name: Mapped[str] = mapped_column(String(120), nullable=False)
     quantity: Mapped[int] = mapped_column(nullable=False)
     unit_price: Mapped[float] = mapped_column(nullable=False)
@@ -287,5 +323,5 @@ class OrderDetail(db.Model):
             "quantity": self.quantity,
             "price": self.unit_price,
             "subtotal": round(self.unit_price * self.quantity, 2),
-            "type": "FOOD" if self.dish_id else "DRINK"
+            "type": "FOOD" if self.dish_id else "DRINK",
         }

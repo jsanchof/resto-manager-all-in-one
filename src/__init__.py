@@ -1,3 +1,3 @@
 """
 Main package initialization
-""" 
+"""

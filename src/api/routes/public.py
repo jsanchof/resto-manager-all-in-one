@@ -4,10 +4,11 @@ from src.api import db
 from src.api.utils import send_email
 import os
 
-public = Blueprint('public', __name__)
+public = Blueprint("public", __name__)
+
 
 # Dishes endpoints
-@public.route('/dishes', methods=['GET'])
+@public.route("/dishes", methods=["GET"])
 def get_all_dishes():
     try:
         dishes = Dishes.query.all()
@@ -16,7 +17,8 @@ def get_all_dishes():
     except Exception as e:
         return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
-@public.route('/dishes/<int:dish_id>', methods=['GET'])
+
+@public.route("/dishes/<int:dish_id>", methods=["GET"])
 def get_dish_by_id(dish_id):
     try:
         dish = Dishes.query.get(dish_id)
@@ -26,8 +28,9 @@ def get_dish_by_id(dish_id):
     except Exception as e:
         return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
+
 # Drinks endpoints
-@public.route('/drinks', methods=['GET'])
+@public.route("/drinks", methods=["GET"])
 def get_all_drinks():
     try:
         drinks = Drinks.query.all()
@@ -36,7 +39,8 @@ def get_all_drinks():
     except Exception as e:
         return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
-@public.route('/drinks/<int:drink_id>', methods=['GET'])
+
+@public.route("/drinks/<int:drink_id>", methods=["GET"])
 def get_drink_by_id(drink_id):
     try:
         drink = Drinks.query.get(drink_id)
@@ -46,41 +50,54 @@ def get_drink_by_id(drink_id):
     except Exception as e:
         return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
+
 # Contact form
-@public.route("/contact", methods=['POST'])
+@public.route("/contact", methods=["POST"])
 def handle_contact_email():
     try:
         data = request.get_json(silent=True)
         if not data:
             return jsonify({"error": "Falta el cuerpo de la solicitud"}), 400
 
-        name = data.get('name')
-        email = data.get('email')
-        message = data.get('message')
+        name = data.get("name")
+        email = data.get("email")
+        message = data.get("message")
 
         if not name or not email or not message:
-            return jsonify({"error": "Se requieren los campos: name, email y message"}), 400
+            return (
+                jsonify({"error": "Se requieren los campos: name, email y message"}),
+                400,
+            )
 
         subject = f"Nuevo mensaje de contacto de {name}"
         admin_email = os.getenv("MAIL_USERNAME")
 
         # HTML bodies
         html_user_body = render_template("email_pagina_contacto.html", name=name)
-        html_admin_body = render_template("email_pagina_contacto_admin.html", name=name, message=message, email=email)
+        html_admin_body = render_template(
+            "email_pagina_contacto_admin.html", name=name, message=message, email=email
+        )
 
         # Send emails and verify results
-        user_sent = send_email(email, "Gracias por contactarnos", html_user_body, is_html=True)
+        user_sent = send_email(
+            email, "Gracias por contactarnos", html_user_body, is_html=True
+        )
         admin_sent = send_email(admin_email, subject, html_admin_body, is_html=True)
 
         if not user_sent or not admin_sent:
-            return jsonify({
-                "msg": "El mensaje fue recibido, pero hubo un problema al enviar el correo.",
-                "user_sent": user_sent,
-                "admin_sent": admin_sent
-            }), 207  # 207 Multi-Status (partial response)
+            return (
+                jsonify(
+                    {
+                        "msg": "El mensaje fue recibido, pero hubo un problema al enviar el correo.",
+                        "user_sent": user_sent,
+                        "admin_sent": admin_sent,
+                    }
+                ),
+                207,
+            )  # 207 Multi-Status (partial response)
 
         return jsonify({"msg": "Mensaje enviado correctamente"}), 200
 
     except Exception as e:
         print("❌ Error in /contact:", e)
-        return jsonify({"error": "Ocurrió un error al procesar la solicitud"}), 500 
+        return jsonify({"error": "Ocurrió un error al procesar la solicitud"}), 500

@@ -3,7 +3,7 @@ import { Container, Card, Input, Button, Alert } from '../components/common';
 import { colors, typography, spacing } from '../theme';
 import SEO from '../components/SEO';
 
-export const Reservas = () => {
+export const Reservations = () => {
     const [form, setForm] = useState({
         guest_name: '',
         guest_phone: '',

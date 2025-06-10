@@ -4,7 +4,8 @@ from src.api.models import Dishes, Drinks, dish_type, drink_type
 from sqlalchemy import select, func, or_
 from . import api
 
-@api.route('/productos', methods=['GET'])
+
+@api.route("/productos", methods=["GET"])
 def get_productos():
     try:
         # Get pagination parameters
@@ -22,13 +23,13 @@ def get_productos():
             dishes_stmt = dishes_stmt.where(
                 or_(
                     Dishes.name.ilike(f"%{search}%"),
-                    Dishes.description.ilike(f"%{search}%")
+                    Dishes.description.ilike(f"%{search}%"),
                 )
             )
             drinks_stmt = drinks_stmt.where(
                 or_(
                     Drinks.name.ilike(f"%{search}%"),
-                    Drinks.description.ilike(f"%{search}%")
+                    Drinks.description.ilike(f"%{search}%"),
                 )
             )
 
@@ -44,32 +45,36 @@ def get_productos():
 
         # Combine and format results
         items = []
-        
+
         # Add dishes
         for dish in dishes:
-            items.append({
-                "id": f"PLATO-{dish.id}",
-                "name": dish.name,
-                "description": dish.description,
-                "url_img": dish.url_img,
-                "price": dish.price,
-                "tipo": "PLATO",
-                "type": dish.type.value,
-                "is_active": dish.is_active
-            })
-        
+            items.append(
+                {
+                    "id": f"PLATO-{dish.id}",
+                    "name": dish.name,
+                    "description": dish.description,
+                    "url_img": dish.url_img,
+                    "price": dish.price,
+                    "tipo": "PLATO",
+                    "type": dish.type.value,
+                    "is_active": dish.is_active,
+                }
+            )
+
         # Add drinks
         for drink in drinks:
-            items.append({
-                "id": f"BEBIDA-{drink.id}",
-                "name": drink.name,
-                "description": drink.description,
-                "url_img": drink.url_img,
-                "price": drink.price,
-                "tipo": "BEBIDA",
-                "type": drink.type.value,
-                "is_active": drink.is_active
-            })
+            items.append(
+                {
+                    "id": f"BEBIDA-{drink.id}",
+                    "name": drink.name,
+                    "description": drink.description,
+                    "url_img": drink.url_img,
+                    "price": drink.price,
+                    "tipo": "BEBIDA",
+                    "type": drink.type.value,
+                    "is_active": drink.is_active,
+                }
+            )
 
         # Calculate total and pagination
         total = len(items)
@@ -78,18 +83,24 @@ def get_productos():
         end_idx = start_idx + per_page
         paginated_items = items[start_idx:end_idx]
 
-        return jsonify({
-            "total": total,
-            "page": page,
-            "per_page": per_page,
-            "pages": total_pages,
-            "items": paginated_items
-        }), 200
+        return (
+            jsonify(
+                {
+                    "total": total,
+                    "page": page,
+                    "per_page": per_page,
+                    "pages": total_pages,
+                    "items": paginated_items,
+                }
+            ),
+            200,
+        )
     except Exception as e:
         print("Error al obtener productos:", e)
         return jsonify({"error": str(e)}), 500
 
-@api.route('/dishes', methods=['GET'])
+
+@api.route("/dishes", methods=["GET"])
 def get_dishes():
     try:
         dishes = Dishes.query.all()
@@ -98,7 +109,8 @@ def get_dishes():
         print("Error al obtener platos:", e)
         return jsonify({"error": str(e)}), 500
 
-@api.route('/drinks', methods=['GET'])
+
+@api.route("/drinks", methods=["GET"])
 def get_drinks():
     try:
         drinks = Drinks.query.all()
@@ -107,7 +119,8 @@ def get_drinks():
         print("Error al obtener bebidas:", e)
         return jsonify({"error": str(e)}), 500
 
-@api.route('/productos', methods=['POST'])
+
+@api.route("/productos", methods=["POST"])
 def crear_producto():
     try:
         data = request.get_json()
@@ -116,16 +129,21 @@ def crear_producto():
         if tipo == "PLATO":
             tipo_plato = data.get("type", "").upper()
             if tipo_plato not in dish_type.__members__:
-                return jsonify({
-                    "error": f"Tipo de plato inválido. Usa uno de: {[t.name for t in dish_type]}"
-                }), 400
+                return (
+                    jsonify(
+                        {
+                            "error": f"Tipo de plato inválido. Usa uno de: {[t.name for t in dish_type]}"
+                        }
+                    ),
+                    400,
+                )
 
             nuevo_plato = Dishes(
                 name=data["name"],
                 description=data["description"],
                 price=data["price"],
                 type=dish_type[tipo_plato],
-                url_img=data.get("url_img")
+                url_img=data.get("url_img"),
             )
             db.session.add(nuevo_plato)
             item = nuevo_plato
@@ -133,35 +151,49 @@ def crear_producto():
         elif tipo == "BEBIDA":
             tipo_bebida = data.get("type", "").upper()
             if tipo_bebida not in drink_type.__members__:
-                return jsonify({
-                    "error": f"Tipo de bebida inválido. Usa uno de: {[t.name for t in drink_type]}"
-                }), 400
+                return (
+                    jsonify(
+                        {
+                            "error": f"Tipo de bebida inválido. Usa uno de: {[t.name for t in drink_type]}"
+                        }
+                    ),
+                    400,
+                )
 
             nueva_bebida = Drinks(
                 name=data["name"],
                 description=data["description"],
                 price=data["price"],
                 type=drink_type[tipo_bebida],
-                url_img=data.get("url_img")
+                url_img=data.get("url_img"),
             )
             db.session.add(nueva_bebida)
             item = nueva_bebida
 
         else:
-            return jsonify({"error": "Tipo de producto inválido. Usa 'PLATO' o 'BEBIDA'"}), 400
+            return (
+                jsonify({"error": "Tipo de producto inválido. Usa 'PLATO' o 'BEBIDA'"}),
+                400,
+            )
 
         db.session.commit()
-        return jsonify({
-            "message": f"{tipo.capitalize()} creado exitosamente",
-            "item": item.serialize()
-        }), 201
+        return (
+            jsonify(
+                {
+                    "message": f"{tipo.capitalize()} creado exitosamente",
+                    "item": item.serialize(),
+                }
+            ),
+            201,
+        )
 
     except Exception as e:
         db.session.rollback()
         print(f"Error al crear {tipo.lower()}:", e)
         return jsonify({"error": str(e)}), 500
 
-@api.route('/productos/<string:tipo>/<int:id>', methods=['PUT'])
+
+@api.route("/productos/<string:tipo>/<int:id>", methods=["PUT"])
 def actualizar_producto(tipo, id):
     try:
         data = request.get_json()
@@ -172,9 +204,14 @@ def actualizar_producto(tipo, id):
             if data.get("type"):
                 tipo_plato = data["type"].upper()
                 if tipo_plato not in dish_type.__members__:
-                    return jsonify({
-                        "error": f"Tipo de plato inválido. Usa uno de: {[t.name for t in dish_type]}"
-                    }), 400
+                    return (
+                        jsonify(
+                            {
+                                "error": f"Tipo de plato inválido. Usa uno de: {[t.name for t in dish_type]}"
+                            }
+                        ),
+                        400,
+                    )
                 item.type = dish_type[tipo_plato]
 
         elif tipo == "BEBIDA":
@@ -182,13 +219,21 @@ def actualizar_producto(tipo, id):
             if data.get("type"):
                 tipo_bebida = data["type"].upper()
                 if tipo_bebida not in drink_type.__members__:
-                    return jsonify({
-                        "error": f"Tipo de bebida inválido. Usa uno de: {[t.name for t in drink_type]}"
-                    }), 400
+                    return (
+                        jsonify(
+                            {
+                                "error": f"Tipo de bebida inválido. Usa uno de: {[t.name for t in drink_type]}"
+                            }
+                        ),
+                        400,
+                    )
                 item.type = drink_type[tipo_bebida]
 
         else:
-            return jsonify({"error": "Tipo de producto inválido. Usa 'PLATO' o 'BEBIDA'"}), 400
+            return (
+                jsonify({"error": "Tipo de producto inválido. Usa 'PLATO' o 'BEBIDA'"}),
+                400,
+            )
 
         if not item:
             return jsonify({"error": f"{tipo.capitalize()} no encontrado"}), 404
@@ -199,17 +244,23 @@ def actualizar_producto(tipo, id):
         item.url_img = data.get("url_img", item.url_img)
 
         db.session.commit()
-        return jsonify({
-            "message": f"{tipo.capitalize()} actualizado correctamente",
-            "item": item.serialize()
-        }), 200
+        return (
+            jsonify(
+                {
+                    "message": f"{tipo.capitalize()} actualizado correctamente",
+                    "item": item.serialize(),
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
         db.session.rollback()
         print(f"Error al actualizar {tipo.lower()}:", e)
         return jsonify({"error": str(e)}), 500
 
-@api.route('/productos/<string:tipo>/<int:id>', methods=['DELETE'])
+
+@api.route("/productos/<string:tipo>/<int:id>", methods=["DELETE"])
 def eliminar_producto(tipo, id):
     try:
         tipo = tipo.upper()
@@ -219,7 +270,10 @@ def eliminar_producto(tipo, id):
         elif tipo == "BEBIDA":
             item = Drinks.query.get(id)
         else:
-            return jsonify({"error": "Tipo de producto inválido. Usa 'PLATO' o 'BEBIDA'"}), 400
+            return (
+                jsonify({"error": "Tipo de producto inválido. Usa 'PLATO' o 'BEBIDA'"}),
+                400,
+            )
 
         if not item:
             return jsonify({"error": f"{tipo.capitalize()} no encontrado"}), 404
@@ -232,4 +286,4 @@ def eliminar_producto(tipo, id):
     except Exception as e:
         db.session.rollback()
         print(f"Error al eliminar {tipo.lower()}:", e)
-        return jsonify({"error": str(e)}), 500 
+        return jsonify({"error": str(e)}), 500

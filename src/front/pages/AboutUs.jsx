@@ -3,7 +3,7 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { GoogleMapLocation } from "../components/GoogleMapLocation.jsx"
 import { Link } from "react-router-dom";
 
-export const Nosotros = () => {
+export const AboutUs = () => {
     return (
         <div className='container'>
             <div className="row">

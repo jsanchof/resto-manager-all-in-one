@@ -6,19 +6,21 @@ from src.api.utils import create_api_response
 from . import api
 from sqlalchemy import select, func
 
+
 def kitchen_required(f):
     @jwt_required()
     def decorated_function(*args, **kwargs):
         claims = get_jwt()
         if claims.get("role") != "KITCHEN":
             return create_api_response(
-                error="Access denied. Kitchen staff only.",
-                status_code=403
+                error="Access denied. Kitchen staff only.", status_code=403
             )
         return f(*args, **kwargs)
+
     return decorated_function
 
-@api.route('/kitchen/orders', methods=['GET'])
+
+@api.route("/kitchen/orders", methods=["GET"])
 @kitchen_required
 def get_kitchen_orders():
     try:
@@ -37,10 +39,12 @@ def get_kitchen_orders():
         total = query.count()
 
         # Apply pagination
-        orders = query.order_by(Order.created_at.desc())\
-            .offset((page - 1) * per_page)\
-            .limit(per_page)\
+        orders = (
+            query.order_by(Order.created_at.desc())
+            .offset((page - 1) * per_page)
+            .limit(per_page)
             .all()
+        )
 
         return create_api_response(
             data={
@@ -49,22 +53,22 @@ def get_kitchen_orders():
                     "page": page,
                     "per_page": per_page,
                     "total": total,
-                    "pages": (total + per_page - 1) // per_page
-                }
+                    "pages": (total + per_page - 1) // per_page,
+                },
             },
-            message="Kitchen orders retrieved successfully"
+            message="Kitchen orders retrieved successfully",
         )
 
     except ValueError as e:
         return create_api_response(
-            error="Invalid pagination parameters",
-            status_code=400
+            error="Invalid pagination parameters", status_code=400
         )
     except Exception as e:
         print("Error getting kitchen orders:", e)
         return create_api_response(error=str(e), status_code=500)
 
-@api.route('/kitchen/orders/<int:id>', methods=['PUT'])
+
+@api.route("/kitchen/orders/<int:id>", methods=["PUT"])
 @kitchen_required
 def update_order_status(id):
     try:
@@ -78,7 +82,7 @@ def update_order_status(id):
         if new_status_str not in order_status.__members__:
             return create_api_response(
                 error=f"Invalid status. Use one of: {[s.name for s in order_status]}",
-                status_code=400
+                status_code=400,
             )
 
         current_status = order.status
@@ -88,21 +92,19 @@ def update_order_status(id):
         allowed_transitions = {
             order_status.PENDING: [order_status.IN_PROGRESS],
             order_status.IN_PROGRESS: [order_status.READY],
-            order_status.READY: [order_status.IN_PROGRESS]  # Allow reverting if needed
+            order_status.READY: [order_status.IN_PROGRESS],  # Allow reverting if needed
         }
 
         if new_status not in allowed_transitions.get(current_status, []):
             return create_api_response(
-                error="Status transition not allowed for kitchen staff",
-                status_code=403
+                error="Status transition not allowed for kitchen staff", status_code=403
             )
 
         order.status = new_status
         db.session.commit()
 
         return create_api_response(
-            data=order.serialize(),
-            message="Order status updated successfully"
+            data=order.serialize(), message="Order status updated successfully"
         )
 
     except Exception as e:
@@ -110,21 +112,24 @@ def update_order_status(id):
         print("Error updating order status:", e)
         return create_api_response(error=str(e), status_code=500)
 
-@api.route('/kitchen/orders/pending/count', methods=['GET'])
+
+@api.route("/kitchen/orders/pending/count", methods=["GET"])
 @kitchen_required
 def get_pending_orders_count():
     try:
         # Count orders that are either pending or in progress
-        stmt = select(func.count()).select_from(Order).where(
-            Order.status.in_([order_status.PENDING, order_status.IN_PROGRESS])
+        stmt = (
+            select(func.count())
+            .select_from(Order)
+            .where(Order.status.in_([order_status.PENDING, order_status.IN_PROGRESS]))
         )
         count = db.session.scalar(stmt)
 
         return create_api_response(
             data={"count": count or 0},
-            message="Pending orders count retrieved successfully"
+            message="Pending orders count retrieved successfully",
         )
 
     except Exception as e:
         print("Error getting pending orders count:", e)
-        return create_api_response(error=str(e), status_code=500) 
+        return create_api_response(error=str(e), status_code=500)
