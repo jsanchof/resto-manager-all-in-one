@@ -1,0 +1,23 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: 🔄 Build and Test
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://gastro-click.onrender.com
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📝 Create deployment status
+        run: |
+          echo "Deployment will happen automatically through Render's auto-deploy feature"
+          echo "Make sure your Render service is configured for automatic deployments from the main branch"

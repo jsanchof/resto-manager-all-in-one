@@ -24,6 +24,36 @@ The restaurant management system follows a modern client-server architecture wit
 - **Containerization**: Docker
 - **Deployment Platform**: Render
 - **Database Hosting**: Render PostgreSQL
+- **Version Control**: Git
+  - Branch Strategy:
+    ```
+    main     ← stable, production-ready code
+     │
+     └── develop   ← staging, integration of all tested features
+          │
+          └── feature/my-feature ← short-lived branches for isolated work
+    ```
+  - Branch Naming Conventions:
+    - `feature/*` - New features
+    - `bugfix/*` - Bug fixes
+    - `improvement/*` - Improvements to existing features
+    - `hotfix/*` - Urgent fixes for production
+  - Pull Request Process Required
+  - Code Review Required
+
+### CI/CD
+- **Platform**: GitHub Actions
+- **Workflows**:
+  - Continuous Integration:
+    - Code linting
+    - Unit tests
+    - Integration tests
+    - Build validation
+  - Continuous Deployment:
+    - Automatic deployment to staging (develop branch)
+    - Manual approval for production deployment (main branch)
+    - Database migration management
+    - Environment configuration
 
 ## Component Architecture
 
