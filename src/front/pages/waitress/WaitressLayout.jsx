@@ -5,7 +5,7 @@ import { colors, typography, spacing, borderRadius } from '../../theme';
 import { LogOut } from 'lucide-react';
 import useGlobalReducer from '../../hooks/useGlobalReducer';
 
-const Layout = () => {
+const WaitressLayout = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { store, dispatch } = useGlobalReducer();

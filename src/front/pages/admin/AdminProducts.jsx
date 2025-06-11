@@ -6,7 +6,7 @@ import { Container, Card, Input, Button, Alert, Table, Modal } from '../../compo
 import { colors, typography, spacing, borderRadius } from '../../theme';
 import ProductForm from "../../components/admin/ProductForm"
 
-function AdminProductos() {
+function AdminProducts() {
   const [productos, setProductos] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [productToEdit, setProductToEdit] = useState(null)
