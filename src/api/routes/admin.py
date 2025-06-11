@@ -12,6 +12,8 @@ from src.api.models import (
     Drink,
     order_status,
     User,
+    ProductIngredient,
+    Ingredient,
 )
 from datetime import datetime, timedelta
 from sqlalchemy import func

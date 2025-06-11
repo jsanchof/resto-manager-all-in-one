@@ -38,11 +38,9 @@ def test_login(client):
     )
 
     # Activate the user
-    from src.api.models import db, User
-
-    user = db.session.scalar(db.select(User).where(User.email == "test@test.com"))
+    user = User.query.filter_by(email="test@test.com").first()
     user.is_active = True
-    db.session.commit()
+    User.query.session.commit()
 
     # Then try to login
     response = client.post(

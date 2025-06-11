@@ -264,3 +264,9 @@ Client Browser
 
 - **Endpoint Conflict Fix:** Resolved a Flask endpoint conflict in kitchen.py by using functools.wraps in the kitchen_required decorator, ensuring unique endpoint names for all routes.
 - **Migration Success:** Migration scripts can now be generated and applied successfully after resolving all import and endpoint issues.
+
+## [UPDATE] ProductIngredient Model Added
+- ProductIngredient model now links products and ingredients (many-to-many).
+- Migrations and tests are passing as of this update.
+
+## [NEXT] Focus: Test coverage and documentation improvements.

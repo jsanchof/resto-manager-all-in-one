@@ -334,3 +334,26 @@ class Ingredient(db.Model):
             "unit": self.unit,
             "minimum_stock": self.minimum_stock,
         }
+
+
+class ProductIngredient(db.Model):
+    __tablename__ = "product_ingredients"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"), nullable=False)
+    ingredient_id: Mapped[int] = mapped_column(
+        ForeignKey("ingredients.id"), nullable=False
+    )
+    quantity: Mapped[float] = mapped_column(nullable=False, default=1)
+    unit: Mapped[str] = mapped_column(String(20), nullable=True)
+
+    product = relationship("Product", backref="product_ingredients")
+    ingredient = relationship("Ingredient", backref="product_ingredients")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "product_id": self.product_id,
+            "ingredient_id": self.ingredient_id,
+            "quantity": self.quantity,
+            "unit": self.unit,
+        }
