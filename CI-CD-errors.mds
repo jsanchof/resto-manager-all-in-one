@@ -1,0 +1,78 @@
+# CI/CD Errors Log
+
+## 1. Pytest --setup-db Argument Error
+
+**Error:**
+```
+UsageError: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]
+__main__.py: error: unrecognized arguments: --setup-db
+```
+**Cause:**
+- The workflow used `python -m pytest --setup-db`, but `--setup-db` is not a valid pytest argument.
+
+**Action Taken:**
+- Removed the 'Setup test database' step from `.github/workflows/ci-cd.yml`.
+- Ensured database setup is handled by running migrations before tests.
+
+---
+
+## 2. Flask DB Upgrade Error
+
+**Error:**
+```
+Error: Could not locate a Flask application. Use the 'flask --app' option, 'FLASK_APP' environment variable, or a 'wsgi.py' or 'app.py' file in the current directory.
+
+Error: No such command 'db'.
+```
+**Cause:**
+- The workflow attempts to run `flask db upgrade` but cannot find the Flask app context or the Flask-Migrate extension is not registered.
+- The `FLASK_APP` environment variable may not be set correctly, or the app entry point is not discoverable in the CI environment.
+
+**Action Taken:**
+- Investigating the correct way to set the Flask app context and ensure the `db` command is available in CI.
+- Will review the workflow and app structure to ensure `FLASK_APP` is set and the migration extension is properly registered.
+
+---
+
+**Next Steps:**
+- Review and fix the workflow to ensure `flask db upgrade` works in CI/CD by:
+  - Setting the `FLASK_APP` environment variable to the correct app entry point (e.g., `src/app.py` or similar).
+  - Ensuring the working directory is correct when running the command.
+  - Verifying that Flask-Migrate is initialized in the app.
+- Test the fix in the remote pipeline to confirm resolution.
+
+---
+
+## 3. Flask-Migrate Migrations Directory Error
+
+**Error:**
+```
+Error: Migration directory not found (when running 'flask db upgrade' from src)
+```
+**Cause:**
+- The workflow runs 'flask db upgrade' from the 'src' directory, but the 'migrations' folder is located at the project root.
+- By default, Flask-Migrate looks for the 'migrations' directory in the current working directory.
+
+**Action Taken:**
+- Updated the workflow to run:
+  ```sh
+  flask db upgrade --directory ../migrations
+  ```
+  This ensures Flask-Migrate finds the migration scripts in the root-level 'migrations' directory.
+
+---
+
+## Configuration Guidance for CI/CD
+
+To ensure the workflow finds all necessary files and runs as expected:
+
+- **requirements.txt** must be in the project root for dependency installation.
+- **migrations/** directory must be in the project root. When running migrations from 'src', use the '--directory ../migrations' flag.
+- **src/app.py** must define a Flask application factory (e.g., 'create_app') for use with 'FLASK_APP=app:create_app'.
+- **Backend tests** should be located within 'src' or its subdirectories. The workflow sets 'working-directory: src' for test discovery.
+- **Environment variables**:
+  - Set 'FLASK_APP=app:create_app' for migrations.
+  - Set 'DATABASE_URL' and 'FLASK_ENV' as needed for your environment.
+- **Frontend**: All frontend steps use 'working-directory: src/front', matching the file structure.
+
+With these settings, the workflow will correctly locate all files and perform the expected actions for both backend and frontend jobs. 
