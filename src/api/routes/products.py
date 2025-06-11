@@ -57,7 +57,7 @@ def get_productos():
                     "image_url": dish.image_url,
                     "price": dish.price,
                     "tipo": "PLATO",
-                    "type": dish.dish_type if hasattr(dish, 'dish_type') else None,
+                    "type": dish.dish_type if hasattr(dish, "dish_type") else None,
                     "is_active": dish.is_active,
                 }
             )
@@ -72,7 +72,7 @@ def get_productos():
                     "image_url": drink.image_url,
                     "price": drink.price,
                     "tipo": "BEBIDA",
-                    "type": drink.drink_type if hasattr(drink, 'drink_type') else None,
+                    "type": drink.drink_type if hasattr(drink, "drink_type") else None,
                     "is_active": drink.is_active,
                 }
             )

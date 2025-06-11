@@ -14,6 +14,7 @@ from src.api.routes import register_routes
 from datetime import timedelta
 from sqlalchemy import text
 
+
 def create_app(config_name=None):
     """
     Application factory for creating Flask app instances.
@@ -42,7 +43,9 @@ def create_app(config_name=None):
 
     # Database configuration
     if ENV == "test":
-        default_db_url = "postgresql://postgres:admin1234@localhost:5432/restaurant_test"
+        default_db_url = (
+            "postgresql://postgres:admin1234@localhost:5432/restaurant_test"
+        )
     else:
         default_db_url = "postgresql://postgres:admin1234@localhost:5432/restaurant"
 
@@ -96,6 +99,7 @@ def create_app(config_name=None):
         return response
 
     return app
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == "__main__":

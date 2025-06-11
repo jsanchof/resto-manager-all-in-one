@@ -6,7 +6,7 @@ from src.api.utils import create_api_response
 from sqlalchemy import select, func
 import functools
 
-kitchen_api = Blueprint('kitchen_api', __name__)
+kitchen_api = Blueprint("kitchen_api", __name__)
 
 
 def kitchen_required(f):
@@ -19,6 +19,7 @@ def kitchen_required(f):
                 error="Access denied. Kitchen staff only.", status_code=403
             )
         return f(*args, **kwargs)
+
     return wrapper
 
 

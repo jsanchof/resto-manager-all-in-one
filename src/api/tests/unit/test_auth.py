@@ -13,7 +13,7 @@ def test_register(client):
             "name": "Test",
             "last_name": "User",
             "phone_number": "1234567890",
-            "role": "CLIENT"
+            "role": "CLIENT",
         },
     )
     assert response.status_code == 201
@@ -33,12 +33,13 @@ def test_login(client):
             "name": "Test",
             "last_name": "User",
             "phone_number": "1234567890",
-            "role": "CLIENT"
+            "role": "CLIENT",
         },
     )
 
     # Activate the user
     from src.api.models import db, User
+
     user = db.session.scalar(db.select(User).where(User.email == "test@test.com"))
     user.is_active = True
     db.session.commit()

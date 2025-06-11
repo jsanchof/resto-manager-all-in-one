@@ -7,7 +7,7 @@ from sqlalchemy import (
     Integer,
     ForeignKey,
     Text,
-    Numeric
+    Numeric,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enum import Enum as PyEnum
@@ -69,8 +69,8 @@ class User(db.Model):
 
 # Product model
 class Product(db.Model):
-    __tablename__ = 'products'
-    
+    __tablename__ = "products"
+
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
@@ -78,10 +78,10 @@ class Product(db.Model):
     image_url: Mapped[str] = mapped_column(String(255), nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True)
     product_type: Mapped[str] = mapped_column(String(20))  # 'DISH' or 'DRINK'
-    
+
     __mapper_args__ = {
-        'polymorphic_identity': 'product',
-        'polymorphic_on': product_type
+        "polymorphic_identity": "product",
+        "polymorphic_on": product_type,
     }
 
 
@@ -92,17 +92,16 @@ class dish_type(PyEnum):
 
 
 class Dish(Product):
-    __tablename__ = 'dishes'
-    
-    id: Mapped[int] = mapped_column(ForeignKey('products.id'), primary_key=True)
+    __tablename__ = "dishes"
+
+    id: Mapped[int] = mapped_column(ForeignKey("products.id"), primary_key=True)
     dish_type: Mapped[str] = mapped_column(
-        Enum('MAIN', 'APPETIZER', 'DESSERT', name='dish_types'),
-        nullable=False
+        Enum("MAIN", "APPETIZER", "DESSERT", name="dish_types"), nullable=False
     )
     preparation_time: Mapped[int] = mapped_column(Integer, nullable=True)  # in minutes
-    
+
     __mapper_args__ = {
-        'polymorphic_identity': 'DISH',
+        "polymorphic_identity": "DISH",
     }
 
 
@@ -117,17 +116,16 @@ class drink_type(PyEnum):
 
 
 class Drink(Product):
-    __tablename__ = 'drinks'
-    
-    id: Mapped[int] = mapped_column(ForeignKey('products.id'), primary_key=True)
+    __tablename__ = "drinks"
+
+    id: Mapped[int] = mapped_column(ForeignKey("products.id"), primary_key=True)
     drink_type: Mapped[str] = mapped_column(
-        Enum('ALCOHOLIC', 'NON_ALCOHOLIC', name='drink_types'),
-        nullable=False
+        Enum("ALCOHOLIC", "NON_ALCOHOLIC", name="drink_types"), nullable=False
     )
     volume: Mapped[int] = mapped_column(Integer, nullable=True)  # in ml
-    
+
     __mapper_args__ = {
-        'polymorphic_identity': 'DRINK',
+        "polymorphic_identity": "DRINK",
     }
 
 
@@ -321,7 +319,7 @@ class OrderDetail(db.Model):
 
 
 class Ingredient(db.Model):
-    __tablename__ = 'ingredients'
+    __tablename__ = "ingredients"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     stock: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

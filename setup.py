@@ -42,7 +42,7 @@ setup(
             "pytest>=8.0.0",
             "pytest-cov>=4.1.0",
             "pytest-xdist>=3.5.0",  # Optional: for parallel test execution
-            "pytest-flask>=1.3.0", # Optional: for Flask-specific testing
+            "pytest-flask>=1.3.0",  # Optional: for Flask-specific testing
         ]
     },
     python_requires=">=3.11",

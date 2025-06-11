@@ -6,6 +6,7 @@ from src.api import db
 from src.api.models import Order, OrderDetail, order_status, User
 from src.api.utils import create_api_response, create_paginated_response
 from flask import Blueprint
+
 orders_api = Blueprint("orders_api", __name__)
 from datetime import datetime
 

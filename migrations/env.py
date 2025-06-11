@@ -17,7 +17,10 @@ logger = logging.getLogger("alembic.env")
 # Explicitly import all models for Alembic autogenerate support
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'api')))
+
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src", "api"))
+)
 from models import *
 
 
