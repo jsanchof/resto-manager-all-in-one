@@ -7,6 +7,7 @@ from sqlalchemy import (
     Integer,
     ForeignKey,
     Text,
+    Numeric
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enum import Enum as PyEnum
@@ -66,7 +67,22 @@ class User(db.Model):
         }
 
 
-# dishes enum and model
+# Product model
+class Product(db.Model):
+    __tablename__ = 'products'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
+    price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    image_url: Mapped[str] = mapped_column(String(255), nullable=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
+    product_type: Mapped[str] = mapped_column(String(20))  # 'DISH' or 'DRINK'
+    
+    __mapper_args__ = {
+        'polymorphic_identity': 'product',
+        'polymorphic_on': product_type
+    }
 
 
 class dish_type(PyEnum):
@@ -75,45 +91,19 @@ class dish_type(PyEnum):
     DESSERT = "DESSERT"
 
 
-class Dishes(db.Model):
-    __tablename__ = "dishes"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(120), nullable=False)
-    description: Mapped[str] = mapped_column(String(120), nullable=False)
-    url_img: Mapped[str] = mapped_column(String(200), nullable=False)
-    price: Mapped[float] = mapped_column(nullable=False)
-    type: Mapped[dish_type] = mapped_column(
-        Enum(dish_type, name="dish_type_enum", native_enum=False),
-        nullable=False,
+class Dish(Product):
+    __tablename__ = 'dishes'
+    
+    id: Mapped[int] = mapped_column(ForeignKey('products.id'), primary_key=True)
+    dish_type: Mapped[str] = mapped_column(
+        Enum('MAIN', 'APPETIZER', 'DESSERT', name='dish_types'),
+        nullable=False
     )
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
-    created_at: Mapped[DateTime] = mapped_column(
-        DateTime(),
-        default=func.now(),
-        server_default=func.now(),
-        nullable=False,
-    )
-    updated_at: Mapped[DateTime] = mapped_column(
-        DateTime(),
-        default=func.now(),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False,
-    )
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "url_img": self.url_img,
-            "price": self.price,
-            "type": self.type.value,
-            "is_active": self.is_active,
-            "created_at": (self.created_at.isoformat() if self.created_at else None),
-            "updated_at": (self.created_at.isoformat() if self.created_at else None),
-        }
+    preparation_time: Mapped[int] = mapped_column(Integer, nullable=True)  # in minutes
+    
+    __mapper_args__ = {
+        'polymorphic_identity': 'DISH',
+    }
 
 
 # Drinks enum and model
@@ -126,43 +116,19 @@ class drink_type(PyEnum):
     SPIRITS = "SPIRITS"
 
 
-class Drinks(db.Model):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(120), nullable=False)
-    description: Mapped[str] = mapped_column(String(120), nullable=False)
-    url_img: Mapped[str] = mapped_column(String(200), nullable=False)
-    price: Mapped[float] = mapped_column(nullable=False)
-    type: Mapped[drink_type] = mapped_column(
-        Enum(drink_type, name="drink_type_enum", native_enum=False),
-        nullable=False,
+class Drink(Product):
+    __tablename__ = 'drinks'
+    
+    id: Mapped[int] = mapped_column(ForeignKey('products.id'), primary_key=True)
+    drink_type: Mapped[str] = mapped_column(
+        Enum('ALCOHOLIC', 'NON_ALCOHOLIC', name='drink_types'),
+        nullable=False
     )
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
-    created_at: Mapped[DateTime] = mapped_column(
-        DateTime(),
-        default=func.now(),
-        server_default=func.now(),
-        nullable=False,
-    )
-    updated_at: Mapped[DateTime] = mapped_column(
-        DateTime(),
-        default=func.now(),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False,
-    )
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "url_img": self.url_img,
-            "price": self.price,
-            "type": self.type.value,
-            "is_active": self.is_active,
-            "created_at": (self.created_at.isoformat() if self.created_at else None),
-            "updated_at": (self.created_at.isoformat() if self.created_at else None),
-        }
+    volume: Mapped[int] = mapped_column(Integer, nullable=True)  # in ml
+    
+    __mapper_args__ = {
+        'polymorphic_identity': 'DRINK',
+    }
 
 
 # Reservation status

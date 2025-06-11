@@ -1,7 +1,7 @@
 import pytest
 from flask import Flask
 from app import create_app
-from models import db
+from src.api.models import db, Product, Ingredient
 from flask_jwt_extended import create_access_token
 
 
@@ -32,3 +32,31 @@ def auth_headers():
     token = create_access_token(identity=1)
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     return headers
+
+
+@pytest.fixture
+def sample_product():
+    product = Product(
+        name="Test Product",
+        description="Test Description",
+        price=10.99,
+        image_url="test.jpg",
+        is_active=True,
+        product_type="DISH",
+    )
+    db.session.add(product)
+    db.session.commit()
+    return product
+
+
+@pytest.fixture
+def sample_ingredient():
+    ingredient = Ingredient(
+        name="Test Ingredient",
+        stock_quantity=100,
+        unit="g",
+        min_stock_level=20,
+    )
+    db.session.add(ingredient)
+    db.session.commit()
+    return ingredient
