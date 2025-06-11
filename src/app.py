@@ -14,41 +14,56 @@ from src.api.routes import register_routes
 from datetime import timedelta
 from sqlalchemy import text
 
-ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
-static_file_dir = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)), "../public/"
-)
+# Environment configuration
+ENV = os.getenv("FLASK_ENV", "development")
+DEBUG = ENV == "development"
 
 app = Flask(__name__)
 
-app.config["JWT_SECRET_KEY"] = "da_secre_qi"
+# JWT configuration
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "da_secre_qi")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 jwt.init_app(app)
 cors.init_app(app)
 bcrypt.init_app(app)
 app.url_map.strict_slashes = False
 
-# database configuration
-default_db_url = "postgresql://postgres:admin1234@localhost:5432/restaurant"
+# Static files configuration
+static_file_dir = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), 
+    "../public/"
+)
+
+# Database configuration
+if ENV == "test":
+    default_db_url = "postgresql://postgres:admin1234@localhost:5432/restaurant_test"
+else:
+    default_db_url = "postgresql://postgres:admin1234@localhost:5432/restaurant"
+
 db_url = os.getenv("DATABASE_URL", default_db_url)
 
+# Handle legacy Heroku DATABASE_URL
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = db_url
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config.update(
+    SQLALCHEMY_DATABASE_URI=db_url,
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    SQLALCHEMY_ECHO=DEBUG
+)
 
 # Initialize SQLAlchemy
 db.init_app(app)
 
 # Initialize database
 with app.app_context():
-    # Drop all tables with CASCADE
-    with db.engine.connect() as connection:
-        connection.execute(text("DROP SCHEMA public CASCADE;"))
-        connection.execute(text("CREATE SCHEMA public;"))
-        connection.execute(text('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'))
-        connection.commit()
+    if ENV != "test":  # Don't reset schema in test environment
+        # Drop all tables with CASCADE
+        with db.engine.connect() as connection:
+            connection.execute(text("DROP SCHEMA public CASCADE;"))
+            connection.execute(text("CREATE SCHEMA public;"))
+            connection.execute(text('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'))
+            connection.commit()
 
     # Create all tables
     db.create_all()

@@ -1,0 +1,22 @@
+Metadata-Version: 2.4
+Name: resto-manager
+Version: 1.0.0
+Requires-Python: >=3.11
+Requires-Dist: flask>=3.1.1
+Requires-Dist: flask-sqlalchemy>=3.1.1
+Requires-Dist: flask-migrate>=4.0.5
+Requires-Dist: flask-jwt-extended>=4.7.1
+Requires-Dist: flask-cors>=4.0.0
+Requires-Dist: psycopg2-binary>=2.9.9
+Requires-Dist: python-dotenv>=1.0.1
+Requires-Dist: gunicorn>=21.2.0
+Requires-Dist: sqlalchemy>=2.0.41
+Requires-Dist: alembic>=1.13.1
+Requires-Dist: bcrypt>=4.1.2
+Provides-Extra: dev
+Requires-Dist: black>=25.1.0; extra == "dev"
+Requires-Dist: flake8>=7.2.0; extra == "dev"
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
