@@ -1,6 +1,7 @@
 """
 API package initialization
 """
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
@@ -14,3 +15,5 @@ cors = CORS()
 
 # Import models to ensure they are registered with SQLAlchemy
 from .models import *
+
+__all__ = []

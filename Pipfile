@@ -23,9 +23,12 @@ colorama = "*"
 tomli = "*"
 flask-admin = "*"
 flask-migrate = "==4.0.5"
+flake8 = "*"
+black = "*"
+pytest-cov = "*"
 
 [requires]
-python_version = "3.13"
+python_version = "3.11"
 
 [scripts]
 start="flask run -p 3001 -h 0.0.0.0"

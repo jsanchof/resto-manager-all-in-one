@@ -1,11 +1,19 @@
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 from src.api import db
-from src.api.models import Order, OrderItem, order_status, User, Table, table_status, Product
+from src.api.models import (
+    Order,
+    OrderDetail,
+    order_status,
+    User,
+    Table,
+    table_status,
+    Product,
+)
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from . import api
-from datetime import datetime
+from src.api.utils import create_api_response
+
 
 # Waiter Authentication Check
 def waiter_required(f):
@@ -15,41 +23,56 @@ def waiter_required(f):
         if not user or user.role != "MESERO":
             return jsonify({"error": "Waiter staff privileges required"}), 403
         return f(*args, **kwargs)
+
     wrapper.__name__ = f.__name__
     return jwt_required()(wrapper)
 
-@api.route('/waiter/orders', methods=['GET'])
+
+waiter_api = Blueprint("waiter_api", __name__)
+
+
+@waiter_api.route("/waiter/orders", methods=["GET"])
 @waiter_required
 def get_waiter_orders():
     try:
         page = int(request.args.get("page", 1))
         per_page = int(request.args.get("per_page", 10))
-        
+
         # Build base query with necessary joins
         stmt = select(Order).options(
             joinedload(Order.user),
             joinedload(Order.items),
-            joinedload(Order.table)
+            joinedload(Order.table),
         )
 
         total = db.session.scalar(select(func.count()).select_from(stmt.subquery()))
-        
-        stmt = stmt.order_by(Order.created_at.desc()).offset((page - 1) * per_page).limit(per_page)
+
+        stmt = (
+            stmt.order_by(Order.created_at.desc())
+            .offset((page - 1) * per_page)
+            .limit(per_page)
+        )
         orders = db.session.scalars(stmt).unique().all()
 
-        return jsonify({
-            "total": total,
-            "page": page,
-            "per_page": per_page,
-            "pages": (total + per_page - 1) // per_page,
-            "items": [order.serialize() for order in orders]
-        }), 200
+        return (
+            jsonify(
+                {
+                    "total": total,
+                    "page": page,
+                    "per_page": per_page,
+                    "pages": (total + per_page - 1) // per_page,
+                    "items": [order.serialize() for order in orders],
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
         print("Error in GET /waiter/orders:", e)
         return jsonify({"error": str(e)}), 500
 
-@api.route('/waiter/orders', methods=['POST'])
+
+@waiter_api.route("/waiter/orders", methods=["POST"])
 @waiter_required
 def create_waiter_order():
     try:
@@ -57,7 +80,7 @@ def create_waiter_order():
         data = request.get_json()
 
         # Validate table
-        table_id = data.get('table_id')
+        table_id = data.get("table_id")
         if not table_id:
             return jsonify({"error": "Table ID is required"}), 400
 
@@ -74,7 +97,7 @@ def create_waiter_order():
             creator_id=current_user_id,
             table_id=table_id,
             status=order_status.PENDING,
-            total=0
+            total=0,
         )
 
         # Process items and check for beverages
@@ -82,25 +105,31 @@ def create_waiter_order():
         total = 0
         has_beverages = False
 
-        for item_data in data.get('items', []):
-            product = Product.query.get(item_data['product_id'])
+        for item_data in data.get("items", []):
+            product = Product.query.get(item_data["product_id"])
             if not product:
-                return jsonify({"error": f"Product {item_data['product_id']} not found"}), 404
+                return (
+                    jsonify({"error": f"Product {item_data['product_id']} not found"}),
+                    404,
+                )
 
             # Check if any product is a beverage
-            if product.type == 'DRINK':
+            if product.type == "DRINK":
                 has_beverages = True
 
-            item = OrderItem(
+            item = OrderDetail(
                 product_id=product.id,
-                quantity=item_data.get('quantity', 1),
-                price=product.price
+                quantity=item_data.get("quantity", 1),
+                price=product.price,
             )
             total += item.price * item.quantity
             items.append(item)
 
         if not items:
-            return jsonify({"error": "Order must contain at least one product"}), 400
+            return (
+                jsonify({"error": "Order must contain at least one product"}),
+                400,
+            )
 
         new_order.has_beverages = has_beverages
         new_order.total = total
@@ -112,17 +141,23 @@ def create_waiter_order():
         db.session.add(new_order)
         db.session.commit()
 
-        return jsonify({
-            "message": "Order created successfully",
-            "order": new_order.serialize()
-        }), 201
+        return (
+            jsonify(
+                {
+                    "message": "Order created successfully",
+                    "order": new_order.serialize(),
+                }
+            ),
+            201,
+        )
 
     except Exception as e:
         db.session.rollback()
         print("Error creating order:", e)
         return jsonify({"error": str(e)}), 500
 
-@api.route('/waiter/tables', methods=['GET'])
+
+@waiter_api.route("/waiter/tables", methods=["GET"])
 @waiter_required
 def get_available_tables():
     try:
@@ -133,7 +168,8 @@ def get_available_tables():
         print("Error getting available tables:", e)
         return jsonify({"error": str(e)}), 500
 
-@api.route('/waiter/orders/<int:id>/pay', methods=['PUT'])
+
+@waiter_api.route("/waiter/orders/<int:id>/pay", methods=["PUT"])
 @waiter_required
 def mark_order_paid(id):
     try:
@@ -144,7 +180,7 @@ def mark_order_paid(id):
         if order.status != order_status.READY:
             return create_api_response(
                 error="Only orders that are ready can be marked as paid",
-                status_code=400
+                status_code=400,
             )
 
         # Free up the table
@@ -158,10 +194,10 @@ def mark_order_paid(id):
 
         return create_api_response(
             data=order.serialize(),
-            message="Order marked as paid and table freed"
+            message="Order marked as paid and table freed",
         )
 
     except Exception as e:
         db.session.rollback()
         print("Error marking order as paid:", e)
-        return create_api_response(error=str(e), status_code=500) 
+        return create_api_response(error=str(e), status_code=500)
