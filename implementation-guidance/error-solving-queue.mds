@@ -1,0 +1,204 @@
+# Error Solving Queue
+
+This document tracks all identified bugs, logic errors, CI/CD issues, and potential cyclic calls in the codebase. Each issue is listed with a brief description and a proposed solution (to be filled after initial review).
+
+## Error List (First Iteration)
+
+### 1. Database Migration Scripts Missing
+- **Description:** No migration scripts found in `migrations/versions/`. This may cause schema drift and break CI/CD or production deployments.
+- **Location:** migrations/versions/
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Use Alembic/Flask-Migrate to generate initial migration scripts reflecting the current database schema.
+  - Ensure all future schema changes are tracked with new migration scripts.
+
+### 2. Incomplete Test Coverage
+- **Description:** Only minimal unit and integration tests found. Many backend and frontend features lack automated tests, risking undetected regressions.
+- **Location:** src/api/tests/unit/, src/api/tests/integration/
+- **Status:** Ongoing improvement (see implementation plan for expanded test coverage tasks)
+- **Proposed Solution:**
+  - Identify untested modules and endpoints.
+  - Add unit and integration tests for all critical backend and frontend features.
+  - Enforce test coverage thresholds in CI.
+  - Revisit and increase test coverage after each major refactor or feature addition.
+
+### 3. CI/CD Pipeline Redundancy and Gaps
+- **Description:** Multiple workflow files (`ci.yml`, `build.yml`, `render.yml`) with overlapping steps. Some jobs (e.g., database setup, migrations) are inconsistently ordered or duplicated. Render deployment is not fully automated.
+- **Location:** .github/workflows/
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Consolidate CI/CD workflows to remove redundancy.
+  - Ensure consistent ordering of jobs (lint, test, build, migrate, deploy).
+  - Automate Render deployment or document manual steps clearly.
+
+### 4. Hardcoded Secrets in CI
+- **Description:** Database credentials are hardcoded in CI files. This is a security risk and should use GitHub secrets.
+- **Location:** .github/workflows/ci.yml, build.yml
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Move all sensitive credentials to GitHub repository secrets.
+  - Reference secrets in workflow files using `${{ secrets.SECRET_NAME }}`.
+
+### 5. No Polymorphic Product Model Implementation
+- **Description:** The implementation plan and architecture mention a polymorphic Product model, but no such model or inheritance structure is present in the codebase.
+- **Location:** src/api/models/, src/api/models.py
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Refactor models to introduce a base Product model with polymorphic inheritance for Dishes and Drinks.
+  - Update related endpoints and migrations accordingly.
+
+### 6. Lack of Inventory and Ingredient Management Endpoints
+- **Description:** Endpoints for inventory and ingredient management are missing or incomplete, despite being planned.
+- **Location:** src/api/routes/products.py, implementation-plan.mds
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Implement missing endpoints for inventory and ingredient management.
+  - Add tests and documentation for new endpoints.
+
+### 7. Cyclic or Redundant API Calls
+- **Description:** Potential for cyclic or redundant API calls in order, product, and inventory management due to lack of clear separation and test coverage.
+- **Location:** src/api/routes/
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Review API logic for cyclic dependencies or redundant calls.
+  - Refactor to ensure clear separation of concerns and efficient logic.
+  - Add integration tests to catch regressions.
+
+### 8. Inconsistent Environment Variable Usage
+- **Description:** Environment variables are inconsistently used between local, CI, and production. Some are hardcoded, others are missing.
+- **Location:** src/api/.flaskenv, CI files
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Standardize environment variable usage across all environments.
+  - Document required variables and ensure they are set in all environments.
+
+### 9. Missing or Outdated Documentation
+- **Description:** Some documentation files may be outdated or missing details about new features, architecture, or migration steps.
+- **Location:** implementation-guidance/
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Review and update all documentation to reflect the current state of the codebase and planned features.
+
+### 1b. Migration Script for Windows
+- **Description:** No Windows-compatible script exists for running migrations and upgrades as in Linux (database.sh).
+- **Location:** Project root
+- **Status:** New
+- **Proposed Solution:**
+  - Create a PowerShell script (database.ps1) or batch file (database.bat) to run `pipenv run migrate` and `pipenv run upgrade` using the correct app context (src/app.py).
+
+### 1c. Circular Import with Shared Blueprint
+- **Description:** Circular import errors occur due to all route files importing a shared 'api' Blueprint from __init__.py.
+- **Location:** src/api/routes/
+- **Status:** New
+- **Proposed Solution:**
+  - Refactor all route files to use their own Blueprint (e.g., orders_api, kitchen_api) and register each in routes/__init__.py.
+  - This will eliminate circular imports and allow migrations and app startup to work.
+
+### 1d. Endpoint Conflict in kitchen.py
+- **Description:** Flask raised an AssertionError due to multiple routes using the same endpoint name (decorated_function) from the kitchen_required decorator.
+- **Location:** src/api/routes/kitchen.py
+- **Status:** Resolved
+- **Solution:** Updated the kitchen_required decorator to use functools.wraps, preserving the original function names and preventing endpoint conflicts.
+
+---
+
+## Next Steps
+- Begin implementation of solutions as described above.
+- Review and update this list as new issues are found or resolved.
+
+## Error List (Second Iteration)
+
+### 1. Database Migration Scripts Missing
+- **Description:** No migration scripts found in `migrations/versions/`. Migration infrastructure is initialized, but scripts are not being generated.
+- **Location:** migrations/versions/
+- **Status:** Still unresolved after multiple attempts.
+- **Proposed Solution:**
+  - Debug Alembic/Flask-Migrate configuration and model imports.
+  - Ensure all models are imported in the migration context so Alembic can detect schema changes.
+  - Add a test model or column to force a schema change and trigger migration script generation.
+
+### 1a. Alembic/Flask-Migrate Misconfiguration or Model Import Issue
+- **Description:** Alembic/Flask-Migrate is not detecting models or schema changes, possibly due to missing imports or misconfiguration in `env.py` or app factory.
+- **Location:** migrations/env.py, src/api/models.py
+- **Status:** New
+- **Proposed Solution:**
+  - Explicitly import all models in the migration context (env.py or app/__init__.py).
+  - Check that `target_metadata` is set correctly and includes all models.
+  - Test migration autogeneration with a simple schema change.
+
+### 2. Incomplete Test Coverage
+- **Description:** Only minimal unit and integration tests found. Many backend and frontend features lack automated tests, risking undetected regressions.
+- **Location:** src/api/tests/unit/, src/api/tests/integration/
+- **Status:** Ongoing improvement (see implementation plan for expanded test coverage tasks)
+- **Proposed Solution:**
+  - Identify untested modules and endpoints.
+  - Add unit and integration tests for all critical backend and frontend features.
+  - Enforce test coverage thresholds in CI.
+  - Revisit and increase test coverage after each major refactor or feature addition.
+
+### 3. CI/CD Pipeline Redundancy and Gaps
+- **Description:** Multiple workflow files (`ci.yml`, `build.yml`, `render.yml`) with overlapping steps. Some jobs (e.g., database setup, migrations) are inconsistently ordered or duplicated. Render deployment is not fully automated.
+- **Location:** .github/workflows/
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Consolidate CI/CD workflows to remove redundancy.
+  - Ensure consistent ordering of jobs (lint, test, build, migrate, deploy).
+  - Automate Render deployment or document manual steps clearly.
+
+### 4. Hardcoded Secrets in CI
+- **Description:** Database credentials are hardcoded in CI files. This is a security risk and should use GitHub secrets.
+- **Location:** .github/workflows/ci.yml, build.yml
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Move all sensitive credentials to GitHub repository secrets.
+  - Reference secrets in workflow files using `${{ secrets.SECRET_NAME }}`.
+
+### 5. No Polymorphic Product Model Implementation
+- **Description:** The implementation plan and architecture mention a polymorphic Product model, but no such model or inheritance structure is present in the codebase.
+- **Location:** src/api/models/, src/api/models.py
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Refactor models to introduce a base Product model with polymorphic inheritance for Dishes and Drinks.
+  - Update related endpoints and migrations accordingly.
+
+### 6. Lack of Inventory and Ingredient Management Endpoints
+- **Description:** Endpoints for inventory and ingredient management are missing or incomplete, despite being planned.
+- **Location:** src/api/routes/products.py, implementation-plan.mds
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Implement missing endpoints for inventory and ingredient management.
+  - Add tests and documentation for new endpoints.
+
+### 7. Cyclic or Redundant API Calls
+- **Description:** Potential for cyclic or redundant API calls in order, product, and inventory management due to lack of clear separation and test coverage.
+- **Location:** src/api/routes/
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Review API logic for cyclic dependencies or redundant calls.
+  - Refactor to ensure clear separation of concerns and efficient logic.
+  - Add integration tests to catch regressions.
+
+### 8. Inconsistent Environment Variable Usage
+- **Description:** Environment variables are inconsistently used between local, CI, and production. Some are hardcoded, others are missing.
+- **Location:** src/api/.flaskenv, CI files
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Standardize environment variable usage across all environments.
+  - Document required variables and ensure they are set in all environments.
+
+### 9. Missing or Outdated Documentation
+- **Description:** Some documentation files may be outdated or missing details about new features, architecture, or migration steps.
+- **Location:** implementation-guidance/
+- **Status:** Unresolved
+- **Proposed Solution:**
+  - Review and update all documentation to reflect the current state of the codebase and planned features.
+
+### 1. Database Migration Scripts Missing
+- **Status:** Resolved
+- **Solution:** After fixing all import and endpoint issues, migration scripts can now be generated and applied successfully.
+
+---
+
+## Next Steps
+- Begin implementation of solutions as described above.
+- Review and update this list as new issues are found or resolved. 

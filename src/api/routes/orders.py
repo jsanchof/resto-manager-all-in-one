@@ -3,13 +3,14 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 from src.api import db
-from src.api.models import Order, OrderItem, order_status, User
+from src.api.models import Order, OrderDetail, order_status, User
 from src.api.utils import create_api_response, create_paginated_response
-from . import api
+from flask import Blueprint
+orders_api = Blueprint("orders_api", __name__)
 from datetime import datetime
 
 
-@api.route("/orders", methods=["GET"])
+@orders_api.route("/orders", methods=["GET"])
 @jwt_required()
 def get_orders():
     try:
@@ -20,7 +21,7 @@ def get_orders():
 
         stmt = select(Order).options(
             joinedload(Order.user),
-            joinedload(Order.items).joinedload(OrderItem.product),
+            joinedload(Order.items).joinedload(OrderDetail.product),
         )
 
         if search:
@@ -60,7 +61,7 @@ def get_orders():
         return create_api_response(error=str(e), status_code=500)
 
 
-@api.route("/orders", methods=["POST"])
+@orders_api.route("/orders", methods=["POST"])
 @jwt_required()
 def create_order():
     try:
@@ -90,7 +91,7 @@ def create_order():
         items = []
 
         for product_item in data.get("products", []):
-            item = OrderItem(
+            item = OrderDetail(
                 order_id=new_order.id,
                 product_id=product_item["id"],
                 quantity=product_item.get("quantity", 1),
@@ -119,7 +120,7 @@ def create_order():
         return create_api_response(error=str(e), status_code=500)
 
 
-@api.route("/orders/<int:id>", methods=["GET"])
+@orders_api.route("/orders/<int:id>", methods=["GET"])
 @jwt_required()
 def get_order(id):
     try:
@@ -135,7 +136,7 @@ def get_order(id):
         return create_api_response(error=str(e), status_code=500)
 
 
-@api.route("/orders/<int:id>", methods=["PUT"])
+@orders_api.route("/orders/<int:id>", methods=["PUT"])
 @jwt_required()
 def update_order(id):
     try:
@@ -167,7 +168,7 @@ def update_order(id):
         return create_api_response(error=str(e), status_code=500)
 
 
-@api.route("/orders/<int:id>", methods=["DELETE"])
+@orders_api.route("/orders/<int:id>", methods=["DELETE"])
 @jwt_required()
 def delete_order(id):
     try:
@@ -185,7 +186,7 @@ def delete_order(id):
         return create_api_response(error=str(e), status_code=500)
 
 
-@api.route("/orders/user", methods=["GET"])
+@orders_api.route("/orders/user", methods=["GET"])
 @jwt_required()
 def get_user_orders():
     try:
@@ -196,7 +197,7 @@ def get_user_orders():
 
         stmt = (
             select(Order)
-            .options(joinedload(Order.items).joinedload(OrderItem.product))
+            .options(joinedload(Order.items).joinedload(OrderDetail.product))
             .where(Order.user_id == user_id)
         )
 

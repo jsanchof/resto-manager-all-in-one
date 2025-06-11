@@ -12,7 +12,7 @@ from datetime import timedelta
 import os
 from sqlalchemy import select, func
 
-auth = Blueprint("auth", __name__)
+auth_api = Blueprint("auth_api", __name__)
 
 
 def generate_verification_token(user_id):
@@ -45,7 +45,7 @@ def send_verification_email(user_email, user_id):
     )
 
 
-@auth.route("/register", methods=["POST"])
+@auth_api.route("/register", methods=["POST"])
 def handle_register():
     try:
         data = request.get_json(silent=True)
@@ -95,7 +95,7 @@ def handle_register():
         return jsonify({"ok": False, "msg": str(e)}), 500
 
 
-@auth.route("/login", methods=["POST"])
+@auth_api.route("/login", methods=["POST"])
 def handle_login():
     try:
         data = request.get_json(silent=True)
@@ -150,7 +150,7 @@ def handle_login():
         return jsonify({"ok": False, "msg": str(e)}), 500
 
 
-@auth.route("/profile", methods=["GET"])
+@auth_api.route("/profile", methods=["GET"])
 @jwt_required()
 def get_profile():
     user_email = get_jwt_identity()
@@ -172,7 +172,7 @@ def get_profile():
     )
 
 
-@auth.route("/profile", methods=["PUT"])
+@auth_api.route("/profile", methods=["PUT"])
 @jwt_required()
 def update_profile():
     user_email = get_jwt_identity()
@@ -191,7 +191,7 @@ def update_profile():
     return jsonify({"msg": "Perfil actualizado correctamente"}), 200
 
 
-@auth.route("/verify-email", methods=["POST"])
+@auth_api.route("/verify-email", methods=["POST"])
 @jwt_required()
 def handle_verify_email():
     try:
@@ -205,7 +205,7 @@ def handle_verify_email():
         return jsonify({"msg": "Ocurrió un error al validar la cuenta"}), 500
 
 
-@auth.route("/users", methods=["GET"])
+@auth_api.route("/users", methods=["GET"])
 def list_users():
     try:
         page = int(request.args.get("page", 1))
@@ -280,7 +280,7 @@ def list_users():
         return jsonify({"error": "Error al obtener los usuarios"}), 500
 
 
-@auth.route("/users/<int:id>", methods=["GET"])
+@auth_api.route("/users/<int:id>", methods=["GET"])
 def get_user_by_id(id):
     try:
         user = db.session.get(User, id)
@@ -292,7 +292,7 @@ def get_user_by_id(id):
         return jsonify({"error": "Error al buscar el usuario"}), 500
 
 
-@auth.route("/users/<int:user_id>", methods=["PUT"])
+@auth_api.route("/users/<int:user_id>", methods=["PUT"])
 def edit_user(user_id):
     try:
         data = request.get_json(silent=True)
@@ -343,7 +343,7 @@ def edit_user(user_id):
         return jsonify({"msg": f"Error al actualizar usuario: {str(e)}"}), 500
 
 
-@auth.route("/users", methods=["DELETE"])
+@auth_api.route("/users", methods=["DELETE"])
 def delete_user():
     try:
         data = request.get_json(silent=True)

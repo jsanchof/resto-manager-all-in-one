@@ -15,6 +15,5 @@ cors = CORS()
 
 # Import models to ensure they are registered with SQLAlchemy
 from .models import *
-from app import create_app
 
-__all__ = ['create_app']
+__all__ = []

@@ -1,10 +1,10 @@
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 from src.api import db
 from src.api.models import (
     Order,
-    OrderItem,
+    OrderDetail,
     order_status,
     User,
     Table,
@@ -13,8 +13,6 @@ from src.api.models import (
 )
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.api.utils import create_api_response
-from . import api
-from datetime import datetime
 
 
 # Waiter Authentication Check
@@ -30,7 +28,10 @@ def waiter_required(f):
     return jwt_required()(wrapper)
 
 
-@api.route("/waiter/orders", methods=["GET"])
+waiter_api = Blueprint("waiter_api", __name__)
+
+
+@waiter_api.route("/waiter/orders", methods=["GET"])
 @waiter_required
 def get_waiter_orders():
     try:
@@ -71,7 +72,7 @@ def get_waiter_orders():
         return jsonify({"error": str(e)}), 500
 
 
-@api.route("/waiter/orders", methods=["POST"])
+@waiter_api.route("/waiter/orders", methods=["POST"])
 @waiter_required
 def create_waiter_order():
     try:
@@ -116,7 +117,7 @@ def create_waiter_order():
             if product.type == "DRINK":
                 has_beverages = True
 
-            item = OrderItem(
+            item = OrderDetail(
                 product_id=product.id,
                 quantity=item_data.get("quantity", 1),
                 price=product.price,
@@ -156,7 +157,7 @@ def create_waiter_order():
         return jsonify({"error": str(e)}), 500
 
 
-@api.route("/waiter/tables", methods=["GET"])
+@waiter_api.route("/waiter/tables", methods=["GET"])
 @waiter_required
 def get_available_tables():
     try:
@@ -168,7 +169,7 @@ def get_available_tables():
         return jsonify({"error": str(e)}), 500
 
 
-@api.route("/waiter/orders/<int:id>/pay", methods=["PUT"])
+@waiter_api.route("/waiter/orders/<int:id>/pay", methods=["PUT"])
 @waiter_required
 def mark_order_paid(id):
     try:

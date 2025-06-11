@@ -3,24 +3,26 @@ from flask_jwt_extended import jwt_required, get_jwt
 from src.api.models import Order, order_status
 from src.api import db
 from src.api.utils import create_api_response
-from . import api
 from sqlalchemy import select, func
+import functools
+
+kitchen_api = Blueprint('kitchen_api', __name__)
 
 
 def kitchen_required(f):
+    @functools.wraps(f)
     @jwt_required()
-    def decorated_function(*args, **kwargs):
+    def wrapper(*args, **kwargs):
         claims = get_jwt()
         if claims.get("role") != "KITCHEN":
             return create_api_response(
                 error="Access denied. Kitchen staff only.", status_code=403
             )
         return f(*args, **kwargs)
+    return wrapper
 
-    return decorated_function
 
-
-@api.route("/kitchen/orders", methods=["GET"])
+@kitchen_api.route("/kitchen/orders", methods=["GET"])
 @kitchen_required
 def get_kitchen_orders():
     try:
@@ -68,7 +70,7 @@ def get_kitchen_orders():
         return create_api_response(error=str(e), status_code=500)
 
 
-@api.route("/kitchen/orders/<int:id>", methods=["PUT"])
+@kitchen_api.route("/kitchen/orders/<int:id>", methods=["PUT"])
 @kitchen_required
 def update_order_status(id):
     try:
@@ -114,7 +116,7 @@ def update_order_status(id):
         return create_api_response(error=str(e), status_code=500)
 
 
-@api.route("/kitchen/orders/pending/count", methods=["GET"])
+@kitchen_api.route("/kitchen/orders/pending/count", methods=["GET"])
 @kitchen_required
 def get_pending_orders_count():
     try:

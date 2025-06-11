@@ -22,6 +22,8 @@
 - [ ] Add integration tests for updated APIs
 - [ ] Create inventory management tests
 - [ ] Test backwards compatibility
+- [ ] Expand test coverage for all modules and endpoints (ongoing)
+- [ ] Revisit and increase test coverage after each major refactor or feature addition
 
 ### Phase 4: CI/CD Updates
 - [ ] Update CI workflow for new database schema
@@ -48,3 +50,18 @@
 - [ ] Usage tracking
 - [ ] Waste management
 - [ ] Profit margins per product
+
+## Current Issues and Adjustments (2024)
+
+- Migration scripts are missing; must be created and versioned for all schema changes.
+- Test coverage is minimal; expand both unit and integration tests for backend and frontend.
+- Inventory and ingredient management endpoints are not yet implemented; prioritize these in upcoming sprints.
+- CI/CD workflows need consolidation and secrets management (move hardcoded credentials to GitHub secrets).
+- Ensure all new features are reflected in documentation and architecture files.
+- The entry point for migrations and Flask app context is `src/app.py`.
+- Create a Windows-compatible migration script (e.g., database.ps1 or database.bat) to mimic the Linux `database.sh` functionality for running migrations and upgrades.
+- Refactor all route files to use their own Blueprint (e.g., orders_api, kitchen_api) instead of importing a shared 'api' object from __init__.py. This eliminates circular imports, which block migrations and app startup.
+- Update routes/__init__.py to import and register each Blueprint individually.
+- This change is required to allow Flask, Flask-Migrate, and Alembic to import the app and models cleanly, so migrations and the app itself will work.
+- Resolved endpoint conflict in kitchen.py by updating the kitchen_required decorator to use functools.wraps, ensuring unique endpoint names for all routes.
+- Migration scripts can now be generated and applied successfully after resolving all import and endpoint issues.

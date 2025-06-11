@@ -14,6 +14,12 @@ config = context.config
 fileConfig(config.config_file_name)
 logger = logging.getLogger("alembic.env")
 
+# Explicitly import all models for Alembic autogenerate support
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'api')))
+from models import *
+
 
 def get_engine():
     try:

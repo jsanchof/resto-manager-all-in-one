@@ -3,13 +3,12 @@ from flask_admin import Admin
 from src.api import db
 from src.api.models import (
     User,
-    Dishes,
+    Dish,
     dish_type,
-    Drinks,
+    Drink,
     Product,
-    Ingredient,
     Order,
-    OrderItem,
+    OrderDetail,
 )
 from flask_admin.contrib.sqla import ModelView
 
@@ -24,9 +23,8 @@ def setup_admin(app):
 
     # You can duplicate that line to add mew models
     # admin.add_view(ModelView(YourModelName, db.session))
-    admin.add_view(ModelView(Dishes, db.session))
-    admin.add_view(ModelView(Drinks, db.session))
+    admin.add_view(ModelView(Dish, db.session))
+    admin.add_view(ModelView(Drink, db.session))
     admin.add_view(ModelView(Product, db.session))
-    admin.add_view(ModelView(Ingredient, db.session))
     admin.add_view(ModelView(Order, db.session))
-    admin.add_view(ModelView(OrderItem, db.session))
+    admin.add_view(ModelView(OrderDetail, db.session))

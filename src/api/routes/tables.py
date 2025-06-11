@@ -1,8 +1,9 @@
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 from src.api import db
 from src.api.models import User, Table, table_status
-from . import api
 from flask_jwt_extended import jwt_required, get_jwt_identity
+
+tables_api = Blueprint("tables_api", __name__)
 
 
 # Admin Authentication Check
@@ -18,7 +19,7 @@ def admin_required(f):
     return jwt_required()(wrapper)
 
 
-@api.route("/tables", methods=["POST"])
+@tables_api.route("/tables", methods=["POST"])
 @admin_required
 def create_table():
     # Create table
@@ -48,7 +49,7 @@ def create_table():
         )
 
 
-@api.route("/tables", methods=["GET"])
+@tables_api.route("/tables", methods=["GET"])
 def get_tables():
     try:
         tables = Table.query.all()
@@ -64,7 +65,7 @@ def get_tables():
         )
 
 
-@api.route("/tables/<int:id>", methods=["PUT"])
+@tables_api.route("/tables/<int:id>", methods=["PUT"])
 @admin_required
 def update_table(id):
     try:
@@ -88,7 +89,7 @@ def update_table(id):
         )
 
 
-@api.route("/tables/<int:id>", methods=["DELETE"])
+@tables_api.route("/tables/<int:id>", methods=["DELETE"])
 @admin_required
 def delete_table(id):
     try:

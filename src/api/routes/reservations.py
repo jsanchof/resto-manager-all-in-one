@@ -1,13 +1,14 @@
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 from datetime import datetime
 from sqlalchemy import select, or_, func
 from src.api import db
 from src.api.models import Reservation, Table, reservation_status, table_status
 from src.api.utils import send_email_reservation
-from . import api
+
+reservations_api = Blueprint("reservations_api", __name__)
 
 
-@api.route("/reservations", methods=["POST", "GET"])
+@reservations_api.route("/reservations", methods=["POST", "GET"])
 def create_reservation():
     if request.method == "POST":
         data = request.get_json()
@@ -142,7 +143,7 @@ def create_reservation():
             return jsonify({"error": str(e)}), 500
 
 
-@api.route("/reservations/<int:id>", methods=["PUT"])
+@reservations_api.route("/reservations/<int:id>", methods=["PUT"])
 def update_reservation(id):
     try:
         data = request.get_json()
@@ -211,7 +212,7 @@ def update_reservation(id):
         )
 
 
-@api.route("/reservations/<int:id>", methods=["DELETE"])
+@reservations_api.route("/reservations/<int:id>", methods=["DELETE"])
 def delete_reservation(id):
     try:
         reserva = Reservation.query.get(id)

@@ -1,17 +1,17 @@
 from flask import Blueprint, jsonify, request, render_template
-from src.api.models import Dishes, Drinks, dish_type, drink_type
+from src.api.models import Dish, Drink, dish_type, drink_type
 from src.api import db
 from src.api.utils import send_email
 import os
 
-public = Blueprint("public", __name__)
+public_api = Blueprint("public_api", __name__)
 
 
 # Dishes endpoints
-@public.route("/dishes", methods=["GET"])
+@public_api.route("/dishes", methods=["GET"])
 def get_all_dishes():
     try:
-        dishes = Dishes.query.all()
+        dishes = Dish.query.all()
         dish_list = [dish.serialize() for dish in dishes]
         return jsonify(dish_list), 200
     except Exception as e:
@@ -21,10 +21,10 @@ def get_all_dishes():
         )
 
 
-@public.route("/dishes/<int:dish_id>", methods=["GET"])
+@public_api.route("/dishes/<int:dish_id>", methods=["GET"])
 def get_dish_by_id(dish_id):
     try:
-        dish = Dishes.query.get(dish_id)
+        dish = Dish.query.get(dish_id)
         if dish is None:
             return jsonify({"error": "No se encontró el platillo"}), 404
         return jsonify(dish.serialize()), 200
@@ -36,10 +36,10 @@ def get_dish_by_id(dish_id):
 
 
 # Drinks endpoints
-@public.route("/drinks", methods=["GET"])
+@public_api.route("/drinks", methods=["GET"])
 def get_all_drinks():
     try:
-        drinks = Drinks.query.all()
+        drinks = Drink.query.all()
         drink_list = [drink.serialize() for drink in drinks]
         return jsonify(drink_list), 200
     except Exception as e:
@@ -49,10 +49,10 @@ def get_all_drinks():
         )
 
 
-@public.route("/drinks/<int:drink_id>", methods=["GET"])
+@public_api.route("/drinks/<int:drink_id>", methods=["GET"])
 def get_drink_by_id(drink_id):
     try:
-        drink = Drinks.query.get(drink_id)
+        drink = Drink.query.get(drink_id)
         if drink is None:
             return jsonify({"error": "No se encontró la bebida"}), 404
         return jsonify(drink.serialize()), 200
@@ -64,7 +64,7 @@ def get_drink_by_id(drink_id):
 
 
 # Contact form
-@public.route("/contact", methods=["POST"])
+@public_api.route("/contact", methods=["POST"])
 def handle_contact_email():
     try:
         data = request.get_json(silent=True)

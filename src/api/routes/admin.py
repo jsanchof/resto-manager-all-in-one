@@ -5,13 +5,11 @@ Admin routes for restaurant management.
 from flask import Blueprint, jsonify, request
 from src.api import db
 from src.api.models import (
-    Ingredient,
     Product,
     Order,
-    OrderItem,
-    ProductIngredient,
-    Dishes,
-    Drinks,
+    OrderDetail,
+    Dish,
+    Drink,
     order_status,
     User,
 )
@@ -96,7 +94,7 @@ def get_all_orders():
 
     query = Order.query.options(
         joinedload(Order.user),
-        joinedload(Order.items).joinedload(OrderItem.product),
+        joinedload(Order.items).joinedload(OrderDetail.product),
     )
 
     if status:
@@ -133,7 +131,7 @@ def admin_update_order(id):
 
     if "items" in data:
         # Remove existing items
-        OrderItem.query.filter_by(order_id=order.id).delete()
+        OrderDetail.query.filter_by(order_id=order.id).delete()
 
         # Add new items
         total = 0
@@ -143,7 +141,7 @@ def admin_update_order(id):
             if product and product.type == "BEBIDA":
                 has_beverages = True
 
-            item = OrderItem(
+            item = OrderDetail(
                 order_id=order.id,
                 product_id=item_data["product_id"],
                 quantity=item_data["quantity"],
@@ -186,7 +184,7 @@ def get_bar_orders():
         Order.status.in_([order_status.PENDIENTE, order_status.EN_PROCESO]),
     ).options(
         joinedload(Order.user),
-        joinedload(Order.items).joinedload(OrderItem.product),
+        joinedload(Order.items).joinedload(OrderDetail.product),
     )
 
     orders = query.order_by(Order.created_at.asc()).paginate(
@@ -207,14 +205,14 @@ def get_bar_orders():
 @admin_api.route("/dishes", methods=["GET"])
 @admin_required
 def get_dishes():
-    dishes = db.session.query(Product).join(Dishes).all()
+    dishes = db.session.query(Product).join(Dish).all()
     return jsonify([dish.serialize() for dish in dishes])
 
 
 @admin_api.route("/drinks", methods=["GET"])
 @admin_required
 def get_drinks():
-    drinks = db.session.query(Product).join(Drinks).all()
+    drinks = db.session.query(Product).join(Drink).all()
     return jsonify([drink.serialize() for drink in drinks])
 
 
@@ -236,7 +234,7 @@ def create_dish():
     db.session.flush()  # Get the product ID
 
     # Create dish
-    dish = Dishes(product_id=product.id)
+    dish = Dish(product_id=product.id)
     db.session.add(dish)
 
     # Add ingredients if provided
@@ -271,7 +269,7 @@ def create_drink():
     db.session.flush()  # Get the product ID
 
     # Create drink
-    drink = Drinks(product_id=product.id)
+    drink = Drink(product_id=product.id)
     db.session.add(drink)
 
     # Add ingredients if provided
@@ -326,8 +324,8 @@ def delete_product(id):
     product = Product.query.get_or_404(id)
 
     # Delete associated dish or drink
-    Dishes.query.filter_by(product_id=id).delete()
-    Drinks.query.filter_by(product_id=id).delete()
+    Dish.query.filter_by(product_id=id).delete()
+    Drink.query.filter_by(product_id=id).delete()
 
     # Delete product and its ingredients
     ProductIngredient.query.filter_by(product_id=id).delete()
@@ -434,12 +432,12 @@ def get_top_selling_products():
     top_products = (
         db.session.query(
             Product,
-            func.count(OrderItem.id).label("total_sold"),
-            func.sum(OrderItem.quantity * OrderItem.price).label("total_revenue"),
+            func.count(OrderDetail.id).label("total_sold"),
+            func.sum(OrderDetail.quantity * OrderDetail.price).label("total_revenue"),
         )
-        .join(OrderItem)
+        .join(OrderDetail)
         .group_by(Product.id)
-        .order_by(func.count(OrderItem.id).desc())
+        .order_by(func.count(OrderDetail.id).desc())
         .limit(5)
         .all()
     )

@@ -243,8 +243,8 @@ class Order(db.Model):
         nullable=False,
     )
 
-    user = relationship("User", backref="orders")
-    creator = relationship("User", backref="created_orders")
+    user = relationship("User", foreign_keys=[user_id], backref="orders")
+    creator = relationship("User", foreign_keys=[creator_id], backref="created_orders")
     table = relationship("Table", backref="orders")
     details = relationship(
         "OrderDetail", back_populates="order", cascade="all, delete-orphan"
@@ -306,8 +306,8 @@ class OrderDetail(db.Model):
     unit_price: Mapped[float] = mapped_column(nullable=False)
 
     order = relationship("Order", back_populates="details")
-    dish = relationship("Dishes", foreign_keys=[dish_id])
-    drink = relationship("Drinks", foreign_keys=[drink_id])
+    dish = relationship("Dish", foreign_keys=[dish_id])
+    drink = relationship("Drink", foreign_keys=[drink_id])
 
     def serialize(self):
         return {
@@ -317,4 +317,22 @@ class OrderDetail(db.Model):
             "price": self.unit_price,
             "subtotal": round(self.unit_price * self.quantity, 2),
             "type": "FOOD" if self.dish_id else "DRINK",
+        }
+
+
+class Ingredient(db.Model):
+    __tablename__ = 'ingredients'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    stock: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    unit: Mapped[str] = mapped_column(String(20), nullable=False)
+    minimum_stock: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "stock": self.stock,
+            "unit": self.unit,
+            "minimum_stock": self.minimum_stock,
         }

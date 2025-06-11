@@ -54,6 +54,12 @@ The restaurant management system follows a modern client-server architecture wit
     - Manual approval for production deployment (main branch)
     - Database migration management
     - Environment configuration
+  - **Improvement Plan:**
+    - Consolidate all workflow files to remove redundancy (ci.yml, build.yml, render.yml)
+    - Ensure consistent ordering of jobs (lint, test, build, migrate, deploy)
+    - Move all hardcoded secrets (e.g., database credentials) to GitHub repository secrets
+    - Reference secrets in workflow files using `${{ secrets.SECRET_NAME }}`
+    - Automate Render deployment or document manual steps clearly
 
 ## Component Architecture
 
@@ -241,3 +247,20 @@ Client Browser
   - Stock management
   - Ingredient tracking
   - Usage reports
+
+## Technical Debt and Required Improvements (2024)
+
+- **Polymorphic Product Model:** Not yet implemented; required for menu extensibility.
+- **Inventory/Ingredient Management:** Endpoints and models are incomplete or missing.
+- **Migration Scripts:** Absent; must be created for all schema changes.
+- **Test Coverage:** Insufficient; expand automated tests for backend and frontend.
+- **CI/CD Security:** Hardcoded secrets in workflows; migrate to GitHub secrets.
+- **Documentation:** Update all docs to reflect new features and architecture changes.
+
+- **Flask App Entry Point:** The entry point for the Flask app and migration context is `src/app.py`.
+- **Windows Migration Script:** A Windows-compatible migration script should be created to match the Linux `database.sh` functionality.
+
+- **Blueprint Refactor:** All route files now use their own Blueprint (e.g., orders_api, kitchen_api) instead of a shared 'api' object. This eliminates circular imports and enables migrations and app startup. Each Blueprint is registered in routes/__init__.py.
+
+- **Endpoint Conflict Fix:** Resolved a Flask endpoint conflict in kitchen.py by using functools.wraps in the kitchen_required decorator, ensuring unique endpoint names for all routes.
+- **Migration Success:** Migration scripts can now be generated and applied successfully after resolving all import and endpoint issues.
