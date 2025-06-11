@@ -1,22 +1,21 @@
 import { useState, useEffect } from "react"
 import { Search, Filter } from 'lucide-react'
 import ProductCard from "../../components/user/ProductCard"
-import OrdenActual from "../../components/user/OrdenActual"
+import CurrentOrder from "../../components/user/CurrentOrder"
 import { showError, showInfo, showSuccess } from "../../utils/toastUtils"
 import { colors, typography, spacing, borderRadius } from '../../theme'
 
-function CrearOrden() {
-    const [productos, setProductos] = useState([])
-    const [ordenActual, setOrdenActual] = useState([])
-    const [busqueda, setBusqueda] = useState("")
-    const [paraLlevar, setParaLlevar] = useState(false)
+function CreateOrder() {
+    const [products, setProducts] = useState([])
+    const [searchQuery, setSearchQuery] = useState("")
+    const [isToGo, setIsToGo] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [loadingProductos, setLoadingProductos] = useState(true)
+    const [loadingProducts, setLoadingProducts] = useState(true)
     const [error, setError] = useState(null)
 
-    // Estados para filtros
-    const [filtroTipo, setFiltroTipo] = useState("todos")
-    const [mostrarFiltros, setMostrarFiltros] = useState(false)
+    // Filter states
+    const [filterType, setFilterType] = useState("all")
+    const [showFilters, setShowFilters] = useState(false)
 
     // Estados para paginación desde el backend
     const [paginaActual, setPaginaActual] = useState(1)
@@ -24,9 +23,9 @@ function CrearOrden() {
     const [totalPaginas, setTotalPaginas] = useState(1)
     const [totalElementos, setTotalElementos] = useState(0)
 
-    const fetchProductos = async (pagina = 1, porPagina = 10, buscar = "", tipo = "todos") => {
+    const fetchProducts = async (page = 1, perPage = 10, search = "", type = "all") => {
         try {
-            setLoadingProductos(true)
+            setLoadingProducts(true)
             setError(null)
 
             // Obtener el token de autenticación
@@ -73,23 +72,23 @@ function CrearOrden() {
 
             setProductos(productosFormateados)
 
-            // Actualizar estados de paginación
-            setPaginaActual(data.page || 1)
-            setTotalPaginas(data.pages || 1)
-            setElementosPorPagina(data.per_page || 10)
-            setTotalElementos(data.total || 0)
+            // Update pagination states
+            setCurrentPage(data.page || 1)
+            setTotalPages(data.pages || 1)
+            setItemsPerPage(data.per_page || 10)
+            setTotalItems(data.total || 0)
 
         } catch (err) {
-            console.error("Error al cargar productos:", err)
+            console.error("Error loading products:", err)
             setError(err.message)
         } finally {
-            setLoadingProductos(false)
+            setLoadingProducts(false)
         }
     }
 
     useEffect(() => {
-        fetchProductos(paginaActual, elementosPorPagina, busqueda, filtroTipo)
-    }, [])
+        fetchProducts(currentPage, itemsPerPage, searchQuery, filterType)
+    }, [currentPage, itemsPerPage, searchQuery, filterType])
 
     const agregarProducto = (producto) => {
         const productoExistente = ordenActual.find((item) => item.id === producto.id)
