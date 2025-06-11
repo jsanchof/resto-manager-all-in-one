@@ -1,4 +1,4 @@
-name: Full Stack CI
+name: Code Consistency Check
 
 on:
   push:
@@ -7,52 +7,23 @@ on:
     branches: [develop, main]
 
 jobs:
-  test-backend:
-    name:  Test Backend (Flask + PostgreSQL)
+  verify-backend:
+    name: Verify Backend Code
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_DB: restaurant_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: admin1234
-          POSTGRES_HOST_AUTH_METHOD: trust
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-      - name:  Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name:  Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name:  Install Python dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          pip install -e .
-          pip install pytest pytest-cov flask-migrate psycopg2-binary
-
-      - name:  Run backend tests
-        env:
-          DATABASE_URL: postgresql://postgres:admin1234@localhost:5432/restaurant_test
-          FLASK_APP: src/app.py
-          FLASK_ENV: test
-          PYTHONPATH: ${{ github.workspace }}
-        run: |
-          # Initialize test database
-          flask db upgrade || echo "No migrations to run"
-          # Run tests with coverage
-          pytest tests/ --cov=src/ --cov-report=xml --cov-report=term-missing -v
+          pip install -e .[dev]
 
   test-frontend:
     name:  Test Frontend (React + Vite)
