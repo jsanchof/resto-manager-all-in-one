@@ -34,9 +34,9 @@ import AdminIngredients from "./pages/admin/Ingredients";
 import LayoutAdmin from "./layouts/LayoutAdmin";
 import AdminReservations from "./pages/admin/AdminReservations";
 // Componentes Mesero
-import Layout from "./pages/waitress/Layout";
-import Orders from "./pages/waitress/Orders";
-import Tables from "./pages/waitress/Tables";
+import WaitressLayout from "./pages/waitress/WaitressLayout";
+import WaitressOrders from "./pages/waitress/WaitressOrders";
+import WaitressTables from "./pages/waitress/WaitressTables";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -105,12 +105,12 @@ export const router = createBrowserRouter(
       <Route
         element={
           <ProtectedRoute requiredRole="WAITER">
-            <Layout />
+            <WaitressLayout />
           </ProtectedRoute>
         }
       >
-        <Route path="/waitress/orders" element={<Orders />} />
-        <Route path="/waitress/tables" element={<Tables />} />
+        <Route path="/waitress/orders" element={<WaitressOrders />} />
+        <Route path="/waitress/tables" element={<WaitressTables />} />
       </Route>
     </>
   )

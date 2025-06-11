@@ -30,8 +30,7 @@ app.url_map.strict_slashes = False
 
 # Static files configuration
 static_file_dir = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)), 
-    "../public/"
+    os.path.dirname(os.path.realpath(__file__)), "../public/"
 )
 
 # Database configuration
@@ -49,7 +48,7 @@ if db_url.startswith("postgres://"):
 app.config.update(
     SQLALCHEMY_DATABASE_URI=db_url,
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    SQLALCHEMY_ECHO=DEBUG
+    SQLALCHEMY_ECHO=DEBUG,
 )
 
 # Initialize SQLAlchemy
