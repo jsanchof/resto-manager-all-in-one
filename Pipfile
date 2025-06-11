@@ -26,8 +26,10 @@ flask-migrate = "==4.0.5"
 flake8 = "*"
 black = "*"
 pytest-cov = "*"
+psycopg2-binary = "*"
 
 [requires]
+python_version = "3.11"
 python_version = "3.11"
 
 [scripts]
