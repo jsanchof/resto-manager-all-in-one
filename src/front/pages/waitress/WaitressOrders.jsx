@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Input, Alert } from '../../components/common';
 import { colors } from '../../theme';
 
-const Orders = () => {
+const WaitressOrders = () => {
     const [orders, setOrders] = useState([]);
     const [isNewOrderModalOpen, setIsNewOrderModalOpen] = useState(false);
     const [selectedTable, setSelectedTable] = useState(null);

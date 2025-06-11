@@ -6,7 +6,7 @@ import { Container, Card, Input, Button, Alert, Table, Modal } from '../../compo
 import { colors, typography, spacing, borderRadius } from '../../theme'
 import BookingForm from "../../components/admin/BookingForm"
 
-function AdminReservas() {
+function AdminReservations() {
   const [reservas, setReservas] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [reservaToEdit, setReservaToEdit] = useState(null)
