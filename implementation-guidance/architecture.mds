@@ -216,3 +216,28 @@ Client Browser
 - User guides
 - Development guides
 - Deployment procedures
+
+## Database Design
+
+### Product Management
+- Polymorphic inheritance for Products
+  - Base Product table with common fields
+  - Specialized Dishes table for food items
+  - Specialized Drinks table for beverages
+  - Ingredient junction table for recipe management
+
+### Inventory Management
+- Real-time stock tracking
+- Ingredient usage calculation
+- Automatic reorder notifications
+- Stock history tracking
+
+### API Structure
+- Products API
+  - Common product operations
+  - Specialized dish operations
+  - Specialized drink operations
+- Inventory API
+  - Stock management
+  - Ingredient tracking
+  - Usage reports

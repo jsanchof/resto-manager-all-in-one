@@ -51,6 +51,20 @@ jobs:
           FLASK_ENV: test
         run: |
           pytest || echo "No tests found"
+          
+      - name: Setup test database
+        run: |
+          python -m pytest --setup-db
+        env:
+          DATABASE_URL: postgresql://postgres:admin1234@localhost:5432/restaurant_test
+          FLASK_ENV: test
+          
+      - name: Run migrations
+        run: |
+          flask db upgrade
+        env:
+          DATABASE_URL: postgresql://postgres:admin1234@localhost:5432/restaurant_test
+          FLASK_ENV: test
 
   test-frontend:
     name: 🧪 Test Frontend (React + Vite)

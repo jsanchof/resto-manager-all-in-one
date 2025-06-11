@@ -1,10 +1,10 @@
 README.md
+pyproject.toml
 setup.cfg
 setup.py
 resto_manager.egg-info/PKG-INFO
 resto_manager.egg-info/SOURCES.txt
 resto_manager.egg-info/dependency_links.txt
-resto_manager.egg-info/requires.txt
 resto_manager.egg-info/top_level.txt
 src/__init__.py
 src/app.py
@@ -27,9 +27,10 @@ src/api/routes/public.py
 src/api/routes/reservations.py
 src/api/routes/tables.py
 src/api/routes/waiter.py
+src/api/tests/__init__.py
+src/api/tests/conftest.py
 src/scripts/__init__.py
 src/scripts/create_test_users.py
 src/scripts/db_management.py
 src/scripts/populate_menu.py
 src/scripts/setup_db.py
-tests/test_database.py
