@@ -3,7 +3,7 @@ services:
     name: resto-manager
     env: python
     buildCommand: ./render_build.sh
-    startCommand: gunicorn wsgi --chdir ./src/
+    startCommand: gunicorn wsgi --chdir ./src/ --bind 0.0.0.0:$PORT
     envVars:
       - key: VITE_BASENAME
         value: /
@@ -16,4 +16,5 @@ services:
       - key: FLASK_ENV
         value: production
       - key: PYTHON_VERSION
-        value: 3.10.6
+        value: 3.11.9
+
