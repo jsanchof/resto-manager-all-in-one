@@ -3,7 +3,7 @@ import { Search, Eye, Trash2, CheckCircle, XCircle, Filter } from 'lucide-react'
 import { Container, Card, Input, Button, Alert, Table, Modal } from '../../components/common';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 
-function AdminOrdenes() {
+function AdminOrders() {
     const [ordenes, setOrdenes] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)

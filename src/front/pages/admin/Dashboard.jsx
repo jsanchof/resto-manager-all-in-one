@@ -18,11 +18,12 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
                 const [salesRes, ingredientsRes, productsRes, statsRes] = await Promise.all([
-                    axios.get('/api/admin/analytics/sales'),
-                    axios.get('/api/admin/ingredients/low-stock'),
-                    axios.get('/api/admin/products/top-selling'),
-                    axios.get('/api/admin/analytics/stats')
+                    axios.get(`${backendUrl}/api/admin/analytics/sales`),
+                    axios.get(`${backendUrl}/api/admin/ingredients/low-stock`),
+                    axios.get(`${backendUrl}/api/admin/products/top-selling`),
+                    axios.get(`${backendUrl}/api/admin/analytics/stats`)
                 ]);
 
                 setSalesData(salesRes.data);

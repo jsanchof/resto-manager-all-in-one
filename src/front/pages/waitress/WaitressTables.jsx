@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Card, Button, Alert } from '../../components/common';
 import { colors, spacing } from '../../theme';
 
-const Tables = () => {
+const WaitressTables = () => {
     const [tables, setTables] = useState([]);
     const [alert, setAlert] = useState(null);
 

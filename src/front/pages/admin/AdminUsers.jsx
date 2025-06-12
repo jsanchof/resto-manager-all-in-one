@@ -165,7 +165,7 @@ function AdminUsers() {
                 console.log("Datos enviados para edición:", dataToSend); // Log para depuración
             } else {
                 // CREACIÓN: Usar el endpoint de registro
-                url = `${import.meta.env.VITE_BACKEND_URL}/register`
+                url = `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`
                 method = 'POST'
 
                 // Preparar los datos para el registro

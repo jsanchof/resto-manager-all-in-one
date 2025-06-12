@@ -54,18 +54,20 @@ jobs:
           pip install -r requirements.txt
       - name: Run migrations
         run: |
+          echo "FLASK_ENV is $FLASK_ENV"
           flask db upgrade --directory ../migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          FLASK_ENV: test
+          FLASK_ENV: production
           FLASK_APP: app:create_app
         working-directory: src
       - name: 🧪 Run backend tests
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FLASK_ENV: production
           FLASK_APP: src/app.py
-          FLASK_ENV: test
         run: |
+          echo "FLASK_ENV is $FLASK_ENV"
           pytest || echo "No tests found"
         working-directory: src
 
