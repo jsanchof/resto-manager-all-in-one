@@ -1,13 +1,19 @@
-envVars:
-    - key: VITE_BASENAME # Imported from Heroku app
-      value: /
-    - key: FLASK_APP # Imported from Heroku app
-      value: src/app.py
-    - key: FLASK_DEBUG # Imported from Heroku app
-      value: 0
-    - key: FLASK_APP_KEY # Imported from Heroku app
-      value: "any key works"
-    - key: FLASK_ENV
-      value: production
-    - key: PYTHON_VERSION
-      value: 3.10.6 
+services:
+  - type: web
+    name: resto-manager
+    env: python
+    buildCommand: ./render_build.sh
+    startCommand: gunicorn wsgi --chdir ./src/
+    envVars:
+      - key: VITE_BASENAME
+        value: /
+      - key: FLASK_APP
+        value: src/app.py
+      - key: FLASK_DEBUG
+        value: 0
+      - key: FLASK_APP_KEY
+        value: "any key works"
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.10.6
