@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Install backend dependencies
 echo "📦 Installing backend dependencies..."
 pip install --upgrade pip
 pip install -r requirements.txt
