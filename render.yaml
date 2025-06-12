@@ -1,0 +1,13 @@
+envVars:
+    - key: VITE_BASENAME # Imported from Heroku app
+      value: /
+    - key: FLASK_APP # Imported from Heroku app
+      value: src/app.py
+    - key: FLASK_DEBUG # Imported from Heroku app
+      value: 0
+    - key: FLASK_APP_KEY # Imported from Heroku app
+      value: "any key works"
+    - key: FLASK_ENV
+      value: production
+    - key: PYTHON_VERSION
+      value: 3.10.6 
