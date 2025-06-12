@@ -17,4 +17,3 @@ services:
         value: production
       - key: PYTHON_VERSION
         value: 3.11.9
-
