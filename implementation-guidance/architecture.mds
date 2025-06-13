@@ -270,3 +270,16 @@ Client Browser
 - Migrations and tests are passing as of this update.
 
 ## [NEXT] Focus: Test coverage and documentation improvements.
+
+## Environment and Deployment Updates (2024)
+- The frontend and backend are now served from a single Render web service. The backend (Flask) serves the frontend static files (Vite build output in /public), and all API calls are routed through the correct VITE_BACKEND_URL.
+- Environment management is robust and standardized:
+  - `FLASK_ENV` controls environment-specific logic (development, production, test).
+  - `FRONTEND_URL` is required for registration and email verification flows.
+  - `VITE_BACKEND_URL` is used in the frontend for all API calls, ensuring flexibility across local dev, local prod, CI/CD, and Render.
+- All API calls in the frontend should use `VITE_BACKEND_URL` for consistency and environment flexibility.
+- There is no longer a separate static site deployment on Render; everything is handled by a single web service.
+
+## Implementation Plan Status
+- All previous implementation steps (migrations, CI/CD, environment management, endpoint corrections, etc.) are complete and marked as done.
+- **Next step:** Review all frontend API calls to ensure they use the correct backend path (`VITE_BACKEND_URL`).

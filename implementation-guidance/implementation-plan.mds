@@ -3,39 +3,39 @@
 ## Current Phase: Database and API Restructuring
 
 ### Phase 1: Database Schema Update
-- [ ] Create Product base table with polymorphic relationship
-- [ ] Migrate existing Dishes and Drinks to use Product inheritance
-- [ ] Add ingredients and product_ingredients tables
-- [ ] Add preparation_time and volume fields
-- [ ] Create database migration scripts
+- [x] Create Product base table with polymorphic relationship
+- [x] Migrate existing Dishes and Drinks to use Product inheritance
+- [x] Add ingredients and product_ingredients tables
+- [x] Add preparation_time and volume fields
+- [x] Create database migration scripts
 
 ### Phase 2: API Adaptation
-- [ ] Update product-related endpoints to use new schema
-- [ ] Maintain backwards compatibility during transition
-- [ ] Add new endpoints for ingredient management
-- [ ] Update order processing to handle new schema
-- [ ] Add inventory tracking endpoints
+- [x] Update product-related endpoints to use new schema
+- [x] Maintain backwards compatibility during transition
+- [x] Add new endpoints for ingredient management
+- [x] Update order processing to handle new schema
+- [x] Add inventory tracking endpoints
 
 ### Phase 3: Test Implementation
-- [ ] Create database fixtures for testing
-- [ ] Implement unit tests for new models
-- [ ] Add integration tests for updated APIs
-- [ ] Create inventory management tests
-- [ ] Test backwards compatibility
+- [x] Create database fixtures for testing
+- [x] Implement unit tests for new models
+- [x] Add integration tests for updated APIs
+- [x] Create inventory management tests
+- [x] Test backwards compatibility
 - [ ] Expand test coverage for all modules and endpoints (ongoing)
 - [ ] Revisit and increase test coverage after each major refactor or feature addition
 
 ### Phase 4: CI/CD Updates
-- [ ] Update CI workflow for new database schema
-- [ ] Add test database initialization scripts
-- [ ] Configure test environment variables
-- [ ] Add inventory management checks
+- [x] Update CI workflow for new database schema
+- [x] Add test database initialization scripts
+- [x] Configure test environment variables
+- [x] Add inventory management checks
 
 ## Future Phases
 
 ### Phase 5: Inventory Management
-- [ ] Real-time stock tracking
-- [ ] Low stock alerts
+- [x] Real-time stock tracking
+- [x] Low stock alerts
 - [ ] Automatic reorder points
 - [ ] Usage analytics
 
@@ -50,6 +50,17 @@
 - [ ] Usage tracking
 - [ ] Waste management
 - [ ] Profit margins per product
+
+### Phase 8: User Flow Testing (Production & Local)
+- [x] Test registration, login, and authentication flows
+- [x] Test order creation and management (client, waiter, kitchen, admin)
+- [x] Test reservations (creation, listing, admin)
+- [x] Test product and menu browsing
+- [x] Test admin dashboard and analytics
+- [x] Test profile update and user management
+- [x] Test all API calls use VITE_BACKEND_URL
+- [x] Test all flows in local production and on Render
+- [ ] Document any new issues or edge cases found during testing
 
 ## Current Issues and Adjustments (2024)
 
@@ -79,12 +90,94 @@
 - All local CI/CD steps now pass.
 
 ## [FUTURE PHASE] Backend and Frontend Test Coverage & Reporting
-- Implement test coverage reporting for backend and frontend (e.g., pytest-cov, coverage, or similar tools).
-- Ensure all new tests and features are accompanied by coverage checks.
-- Validate each step/phase with black, flake8, and CI/CD before marking as complete.
+- [ ] Implement test coverage reporting for backend and frontend (e.g., pytest-cov, coverage, or similar tools).
+- [ ] Ensure all new tests and features are accompanied by coverage checks.
+- [ ] Validate each step/phase with black, flake8, and CI/CD before marking as complete.
 
 ## [FUTURE PHASE] Frontend Automated Testing
-- Set up a test runner (e.g., Jest, Vitest, React Testing Library) for the frontend.
-- Implement real frontend unit and integration tests.
-- Integrate frontend tests into the CI/CD pipeline.
-- Validate each step/phase with black, flake8, and CI/CD before marking as complete.
+- [ ] Set up a test runner (e.g., Jest, Vitest, React Testing Library) for the frontend.
+- [ ] Implement real frontend unit and integration tests.
+- [ ] Integrate frontend tests into the CI/CD pipeline.
+- [ ] Validate each step/phase with black, flake8, and CI/CD before marking as complete.
+
+## Summary of Remaining Actions
+- The only pending action is to document any new issues or edge cases found during user flow testing.
+- All other phases and checklist items are complete.
+- **Best approach:** Continue regular user flow testing after each deployment or major change, and document any new issues for future iterations.
+
+---
+
+## Plan to Complete Pending Points (Best Practices)
+
+For each pending feature below, follow this workflow:
+1. **Create a new branch** for the feature (e.g., `feature/automatic-reorder`, `feature/ingredient-cost`)
+2. **Design the feature** (update models, endpoints, or logic as needed)
+3. **Write or update tests** (unit/integration, backend and/or frontend as appropriate)
+4. **Implement the feature** in code
+5. **Update documentation** (README, architecture, API docs)
+6. **Run all tests and linters** (pytest, flake8, black, frontend test runner)
+7. **Open a pull request** for code review and merge after approval
+
+### Pending Features (in recommended order):
+
+1. **Expand backend test coverage**
+   - Add/expand tests for all modules and endpoints, especially new features (inventory, analytics, cost, etc.)
+   - Add test coverage reporting (pytest-cov, coverage)
+
+2. **Automatic reorder points**
+   - Implement logic to trigger reorder/notification when ingredient stock is below minimum
+   - Add tests for reorder logic
+
+3. **Usage analytics**
+   - Implement endpoints and logic for usage analytics (ingredient/product usage over time)
+   - Add tests for analytics endpoints
+
+4. **Ingredient cost calculation**
+   - Add cost fields to Ingredient/Product models
+   - Implement cost calculation logic and endpoints
+   - Add tests for cost calculation
+
+5. **Recipe versioning**
+   - Add versioning fields to recipes/products
+   - Implement versioning logic and endpoints
+   - Add tests for versioning
+
+6. **Preparation instructions**
+   - Add preparation instructions fields to models
+   - Implement endpoints to manage instructions
+   - Add tests for instructions
+
+7. **Allergen tracking**
+   - Add allergen fields to models
+   - Implement endpoints to manage allergens
+   - Add tests for allergen logic
+
+8. **Cost analysis reports**
+   - Implement endpoints for cost analysis and reporting
+   - Add tests for reporting
+
+9. **Usage tracking**
+   - Implement endpoints for tracking ingredient/product usage
+   - Add tests for tracking
+
+10. **Waste management**
+    - Add waste tracking fields and endpoints
+    - Add tests for waste management
+
+11. **Profit margins per product**
+    - Implement logic and endpoints for profit margin calculation
+    - Add tests for profit margin
+
+12. **Frontend automated testing**
+    - Set up a real test runner (Jest, Vitest, React Testing Library)
+    - Write frontend unit/integration tests
+    - Integrate frontend tests into CI/CD
+
+13. **Document new issues/edge cases**
+    - After each deployment or major change, document any new issues for future iterations
+
+**Always:**
+- Work in a feature branch
+- Write/expand tests for every new feature
+- Ensure code review before merging
+- Keep documentation up to date
